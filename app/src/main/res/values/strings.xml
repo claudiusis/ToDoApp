@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">ToDoApp</string>
+    <string name="edit_hint">Что надо слелать…</string>
+    <string name="no">Нет</string>
+    <string name="low">Низкий</string>
+    <string name="high"><font color="@color/red">!! Высокий</font></string>
+    <string name="importance">importance</string>
+    <string name="completed">Выполнено - </string>
+    <string name="new_block">Новое</string>
+    <string name="cross">cross</string>
+    <string name="save">СОХРАНИТЬ</string>
+    <string name="importance_title">Важность</string>
+    <string name="no_example">Нет</string>
+    <string name="dedline_title">Сделать до</string>
+    <string name="delete">Удалиить</string>
+    <string name="exaple_vh">1</string>
+    <string name="date_example">Дата</string>
+    <string name="eye">eye</string>
+    <string name="add">add</string>
+
 </resources>
