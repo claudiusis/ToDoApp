@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="actionBarSize">56dp</dimen>
+    <dimen name="margin">30dp</dimen>
+    <dimen name="marginOriginal">20dp</dimen>
+</resources>

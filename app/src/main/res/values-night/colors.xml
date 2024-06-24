@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="blue">#007AFF</color>
+    <color name="red">#FF3B30</color>
+    <color name="green">#34C759</color>
+    <color name="gray">#8E8E93</color>
+    <color name="gray_light">#48484A</color>
+
+    <color name="primary">#161618</color>
+    <color name="secondary">#252528</color>
+    <color name="elevated">#3C3C3F</color>
+
+    <color name="primaryLabel">@color/white</color>
+    <color name="secondaryLabel">#99FFFFFF</color>
+    <color name="tertiaryLabel">#66FFFFFF</color>
+    <color name="disable">#26FFFFFF</color>
+
+    <color name="separator">#33FFFFFF</color>
+    <color name="overlay">#52000000</color>
+</resources>

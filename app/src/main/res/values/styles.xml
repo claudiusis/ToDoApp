@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="FAB">
+        <item name="cornerFamily">rounded</item>
+        <item  name="cornerSize">50%</item>
+    </style>
+    
+    <style name="FAB_bg">
+        <item name="backgroundTint">@color/blue</item>
+        <item name="tint">@color/white</item>
+    </style>
+
+    <style name="popUpMenu">
+        <item name="popupMenuBackground">@color/white</item>
+    </style>
+    
+    <style name="DialogTheme" parent="Theme.Material3.DayNight.Dialog">
+        <item name="colorAccent">@color/blue</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="MyActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="elevation">4dp</item>
+    </style>
+
+    <style name="ToggleButtonNoBorder">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:focusable">false</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+</resources>
