@@ -45,13 +45,11 @@ import com.example.todoapp.R
 import com.example.todoapp.core.ChangeType
 import com.example.todoapp.core.Importance
 import com.example.todoapp.data.repository.TodoItem
-import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
 import com.example.todoapp.ui.core.TodoAppTheme
 import com.example.todoapp.ui.core.Typography
 import com.example.todoapp.ui.core.backPrimary
 import com.example.todoapp.ui.core.backSecondary
 import com.example.todoapp.ui.core.blue
-import com.example.todoapp.ui.core.disable
 import com.example.todoapp.ui.core.gray
 import com.example.todoapp.ui.core.green
 import com.example.todoapp.ui.core.labelPrimary
@@ -60,7 +58,7 @@ import com.example.todoapp.ui.core.tertiaryLabel
 import com.example.todoapp.ui.core.white
 import com.example.todoapp.ui.mainpage.TodoListEvent
 import com.example.todoapp.ui.mainpage.UiState
-import java.lang.annotation.ElementType
+import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

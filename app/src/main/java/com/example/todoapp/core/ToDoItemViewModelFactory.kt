@@ -1,7 +1,6 @@
 package com.example.todoapp.core
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

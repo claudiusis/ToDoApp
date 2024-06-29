@@ -2,7 +2,6 @@ package com.example.todoapp.core
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
 import androidx.navigation.NavHost
 import com.example.todoapp.data.repository.TodoItemsRepository
 import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel

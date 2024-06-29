@@ -6,7 +6,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHost
-import com.example.todoapp.core.ChangeType
 import com.example.todoapp.core.Importance
 import com.example.todoapp.core.Result
 import com.example.todoapp.data.repository.TodoItem
