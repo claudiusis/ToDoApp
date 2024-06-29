@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/mainPageFragment">
 
     <fragment
         android:id="@+id/mainPageFragment"
-        android:name="com.example.todoapp.ui.MainPageFragment"
-        android:label="fragment_main_page"
-        tools:layout="@layout/fragment_main_page" >
+        android:name="com.example.todoapp.ui.mainpage.MainPageFragment"
+        android:label="fragment_main_page">
         <action
             android:id="@+id/action_mainPageFragment_to_taskPageFragment"
             app:destination="@id/taskPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/taskPageFragment"
-        android:name="com.example.todoapp.ui.TaskPageFragment"
-        android:label="fragment_task_page"
-        tools:layout="@layout/fragment_task_page" />
+        android:name="com.example.todoapp.ui.taskpage.TaskPageFragment"
+        android:label="fragment_task_page"/>
+    <argument
+        android:name="id"
+        app:argType="string"
+        android:defaultValue="-1" />
 </navigation>
