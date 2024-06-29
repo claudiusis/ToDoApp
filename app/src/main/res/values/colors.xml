@@ -20,4 +20,6 @@
 
     <color name="separator">#33000000</color>
     <color name="overlay">#0F000000</color>
+    <color name="back">#FFFFFF</color>
+    <color name="nightTheme">#252528</color>
 </resources>
