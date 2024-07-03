@@ -4,7 +4,7 @@
     <string name="no">Нет</string>
     <string name="low">Низкий</string>
     <string name="high"><font color="@color/red">!! Высокий</font></string>
-    <string name="importance">importance</string>
+    <string name="importance">Важность</string>
     <string name="completed">Выполнено - </string>
     <string name="new_block">Новое</string>
     <string name="cross">cross</string>

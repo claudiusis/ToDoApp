@@ -2,6 +2,21 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="BlackTheme">
+        <State />
+      </entry>
+      <entry key="DarkScreenPreview">
+        <State />
+      </entry>
+      <entry key="LightScreenPreview">
+        <State />
+      </entry>
+      <entry key="LightTheme">
+        <State />
+      </entry>
+      <entry key="MainScreen">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>

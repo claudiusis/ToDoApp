@@ -4,21 +4,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-enum class Importance {
-    LOW,
-    NORMAL,
-    URGENT
+sealed class Importance(val value: String) {
+    data object Low : Importance("Низкий")
+    data object Normal : Importance("Нет")
+    data object Urgent : Importance("!! Высокий")
 }
 
 object ChangeType {
-    fun importanceToString(type: Importance) : String  {
-        return when(type){
-            Importance.LOW -> "Низкий"
-            Importance.NORMAL -> "Нет"
-            Importance.URGENT -> "!! Высокий"
-        }
-    }
-
     fun changeDateFormat(date: Date) : String {
         val outputFormat = SimpleDateFormat("d MMMM yyyy", Locale("ru"))
         return outputFormat.format(date)
