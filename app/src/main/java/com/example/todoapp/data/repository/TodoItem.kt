@@ -3,6 +3,9 @@ package com.example.todoapp.data.repository
 import com.example.todoapp.core.Importance
 import java.util.Date
 
+/*
+* Base data class fot item of list
+*/
 data class TodoItem(
     val id : String,
     var text : String,

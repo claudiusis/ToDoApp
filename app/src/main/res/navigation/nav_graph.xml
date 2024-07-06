@@ -2,20 +2,24 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainPageFragment">
+    app:startDestination="@id/main_page_fragment">
 
     <fragment
-        android:id="@+id/mainPageFragment"
+        android:id="@+id/main_page_fragment"
         android:name="com.example.todoapp.ui.mainpage.MainPageFragment"
         android:label="fragment_main_page">
         <action
             android:id="@+id/action_mainPageFragment_to_taskPageFragment"
-            app:destination="@id/taskPageFragment" />
+            app:destination="@id/task_page_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/taskPageFragment"
+        android:id="@+id/task_page_fragment"
         android:name="com.example.todoapp.ui.taskpage.TaskPageFragment"
-        android:label="fragment_task_page"/>
+        android:label="fragment_task_page">
+        <action
+            android:id="@+id/action_taskPageFragment_to_mainPageFragment"
+            app:destination="@id/main_page_fragment" />
+    </fragment>
     <argument
         android:name="id"
         app:argType="string"

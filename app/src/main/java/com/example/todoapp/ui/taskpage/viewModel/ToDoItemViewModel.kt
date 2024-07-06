@@ -1,4 +1,5 @@
 package com.example.todoapp.ui.taskpage.viewModel
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,11 +10,10 @@ import androidx.navigation.NavHost
 import com.example.todoapp.core.Importance
 import com.example.todoapp.core.Result
 import com.example.todoapp.data.repository.TodoItem
-import com.example.todoapp.data.repository.TodoItemsRepository
+import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
 import com.example.todoapp.ui.mainpage.UiState
 import com.example.todoapp.ui.taskpage.TaskEvent
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,13 +21,17 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
 
+/*
+* ViewModel for second page
+*/
 class ToDoItemViewModel(
-    private val savedStateHandle: SavedStateHandle? = null,
-    private val repository: TodoItemsRepository = TodoItemsRepository(),
-    private val navHost: NavHost? = null
+    private val savedStateHandle: SavedStateHandle?,
+    private val repository: TodoItemsRepositoryImpl,
+    private val navHost: NavHost
 ) : ViewModel() {
 
-    private var _toDoItem by mutableStateOf<TodoItem?>(null)
+    var _toDoItem by mutableStateOf<TodoItem?>(null)
+        private set
     var text by mutableStateOf("")
         private set
     var deadline by mutableStateOf<Date?>(null)
@@ -41,7 +45,7 @@ class ToDoItemViewModel(
     var deleteState by mutableStateOf<Boolean>(false)
         private set
 
-    private val _uiState : MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
@@ -51,10 +55,10 @@ class ToDoItemViewModel(
     init {
         val id = savedStateHandle?.get<String>("id") ?: "-1"
         if (id != "-1") {
-            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-                repository.getItemById(id).collect { result ->
-                    when (result) {
-                        is Result.Success -> {
+            viewModelScope.launch(exceptionHandler) {
+                when (val result = repository.getItemById(id)) {
+                    is Result.Success -> {
+                        result.data?.let {
                             text = result.data.text
                             deadline = result.data.deadLine
                             _importance = result.data.importance
@@ -62,23 +66,17 @@ class ToDoItemViewModel(
                             deadline?.let {
                                 switchState = true
                             }
-
-                            _uiState.update {
-                                UiState.Success
-                            }
-
-                            this@ToDoItemViewModel._toDoItem = result.data
                         }
-
-                        is Result.Loading -> {
-                            _uiState.update {
-                                UiState.Loading
-                            }
+                        _uiState.update {
+                            UiState.Success
                         }
-                        is Result.Error -> {
-                            _uiState.update {
-                                UiState.Error(result.e.message.toString())
-                            }
+                        this@ToDoItemViewModel._toDoItem = result.data
+                    }
+
+                    is Result.Error -> {
+                        val message = result.e.message ?: "Произошла ошибка"
+                        _uiState.update {
+                            UiState.Error(message)
                         }
                     }
                 }
@@ -91,70 +89,92 @@ class ToDoItemViewModel(
         }
     }
 
-    fun onEvent(event: TaskEvent){
-        when(event){
+    fun onEvent(event: TaskEvent) {
+        when (event) {
             is TaskEvent.OnTextChange -> {
                 text = event.text
             }
+
             is TaskEvent.OnBackClicked -> {
-                navHost?.navController?.popBackStack()
+                navHost.navController.navigate(com.example.todoapp.R.id.action_taskPageFragment_to_mainPageFragment)
             }
+
             is TaskEvent.OnDeleteClickedChange -> {
                 if (deleteState) {
-                    viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-                        repository.deleteItem(_toDoItem!!)
+                    viewModelScope.launch(exceptionHandler) {
+                        when (val result = repository.deleteItem(_toDoItem!!.id)) {
+                            is Result.Success -> navHost.navController.navigate(com.example.todoapp.R.id.action_taskPageFragment_to_mainPageFragment)
+                            is Result.Error -> {
+                                val message = result.e.message ?: "Произошла ошибка"
+                                _uiState.update {
+                                    UiState.Error(message)
+                                }
+                            }
+                        }
                     }
-                    navHost?.navController?.popBackStack()
                 }
             }
-            is TaskEvent.OnSaveClickedChange -> {
-                viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
 
+            is TaskEvent.OnSaveClickedChange -> {
+                viewModelScope.launch(exceptionHandler) {
                     val item = TodoItem(
-                        _toDoItem?.id?:UUID.randomUUID().toString(),
+                        _toDoItem?.id ?: UUID.randomUUID().toString(),
                         text,
                         _importance,
                         deadline,
-                        _toDoItem?.isCompleted?:false,
-                        _toDoItem?.creationDate?: Date(),
+                        _toDoItem?.isCompleted ?: false,
+                        _toDoItem?.creationDate ?: Date(),
                         _toDoItem?.let { Date() }
                     )
-                    if (_toDoItem==null){
+                    val result = if (_toDoItem == null) {
                         repository.addItem(item)
                     } else {
                         repository.updateItem(item)
                     }
+                    when (result) {
+                        is Result.Success -> navHost.navController.navigate(com.example.todoapp.R.id.action_taskPageFragment_to_mainPageFragment)
+                        is Result.Error -> {
+                            val message = result.e.message ?: "Произошла ошибка"
+                            _uiState.update {
+                                UiState.Error(message)
+                            }
+                        }
+                    }
                 }
-                navHost?.navController?.popBackStack()
             }
+
             is TaskEvent.OnImportanceChange -> {
                 _importance = event.importance
             }
+
             is TaskEvent.OnDeadLineChange -> {
                 deadline = event.date
                 _uiState.update {
                     UiState.Success
                 }
             }
+
             is TaskEvent.OnCancelClicked -> {
-                if (deadline==null){
+                if (deadline == null) {
                     switchState = false
                 }
                 _uiState.update {
                     UiState.Success
                 }
             }
+
             is TaskEvent.OnSwitchChange -> {
                 switchState = !switchState
 
-                if (!switchState){
+                if (!switchState) {
                     deadline = null
-                } else if (deadline==null){
+                } else if (deadline == null) {
                     _uiState.update {
                         UiState.Dialog
                     }
                 }
             }
+
             is TaskEvent.OnTextDeadlineClicked -> {
                 _uiState.update {
                     UiState.Dialog

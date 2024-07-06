@@ -16,8 +16,6 @@ import com.example.todoapp.ui.taskpage.composable.TaskPage
 import com.example.todoapp.ui.taskpage.viewModel.ToDoItemViewModel
 
 class TaskPageFragment : Fragment() {
-
-    private lateinit var toDoPage : ToDoItemViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -26,12 +24,11 @@ class TaskPageFragment : Fragment() {
         val app = requireActivity().application as ToDoApp
         val repository = app.repository
 
-        toDoPage = ViewModelProvider(
+        val toDoPage = ViewModelProvider(
             this,
-            ToDoItemViewModelFactory(repository, this, arguments,
+            ToDoItemViewModelFactory(repository,
                 requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHost)
         )[ToDoItemViewModel::class.java]
-
         return ComposeView(requireContext()).apply { 
             setContent {
                 TodoAppTheme {

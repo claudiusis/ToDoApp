@@ -18,15 +18,14 @@ import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
 class MainPageFragment : Fragment() {
 
     private val viewModel: TodoViewModel by viewModels {
-        ToDoViewModelFactory((requireActivity().application as ToDoApp).repository, requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHost)
+        ToDoViewModelFactory((requireActivity().application as ToDoApp).repository,
+        requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHost)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
         return ComposeView(requireContext()).apply {
             setContent {
                 TodoAppTheme {
@@ -37,12 +36,9 @@ class MainPageFragment : Fragment() {
             }
         }
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val navHost = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHost
         viewModel.setNavHost(navHost)
-        viewModel.getToDoList()
     }
-
 }

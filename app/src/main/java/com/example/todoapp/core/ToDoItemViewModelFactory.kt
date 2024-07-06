@@ -1,18 +1,17 @@
 package com.example.todoapp.core
 
-import android.os.Bundle
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHost
-import androidx.savedstate.SavedStateRegistryOwner
-import com.example.todoapp.data.repository.TodoItemsRepository
+import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
 import com.example.todoapp.ui.taskpage.viewModel.ToDoItemViewModel
 
+/*
+* Factory for TodoItemViewModel
+*/
 class ToDoItemViewModelFactory(
-    private val repository: TodoItemsRepository,
-    private val owner: SavedStateRegistryOwner,
-    private val defaultArgs: Bundle? = null,
+    private val repository: TodoItemsRepositoryImpl,
     private val navHost: NavHost
     ):
     AbstractSavedStateViewModelFactory() {
@@ -25,6 +24,6 @@ class ToDoItemViewModelFactory(
         if (modelClass.isAssignableFrom(ToDoItemViewModel::class.java)){
             return ToDoItemViewModel(handle, repository, navHost) as T
         }
-        throw Exception("Class cast exception")
+        throw RuntimeException("Incorrect class")
     }
 }
