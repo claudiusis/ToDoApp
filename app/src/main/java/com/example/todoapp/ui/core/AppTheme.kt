@@ -2,31 +2,19 @@ package com.example.todoapp.ui.core
 
 import android.app.Activity
 import android.os.Build
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
 
@@ -145,215 +133,4 @@ fun TodoAppTheme(
         typography = Typography,
         content = content
     )
-}
-
-
-@Preview
-@Composable
-private fun LightTheme(
-    line1 : List<Color> = listOf(
-        MaterialTheme.colorScheme.separator,
-        MaterialTheme.colorScheme.overlay
-    ),
-    line2 : List<Color> = listOf(
-        MaterialTheme.colorScheme.labelPrimary,
-        MaterialTheme.colorScheme.labelSecondary,
-        MaterialTheme.colorScheme.tertiaryLabel,
-        MaterialTheme.colorScheme.disable
-    ),
-    line3 : List<Color> = listOf(
-        MaterialTheme.colorScheme.red,
-        MaterialTheme.colorScheme.green,
-        MaterialTheme.colorScheme.blue,
-        MaterialTheme.colorScheme.gray,
-        MaterialTheme.colorScheme.grayLight,
-        MaterialTheme.colorScheme.white
-    ),
-    line4 : List<Color> = listOf(
-        MaterialTheme.colorScheme.backPrimary,
-        MaterialTheme.colorScheme.backSecondary,
-        MaterialTheme.colorScheme.backElevated
-    ),
-){
-    TodoAppTheme(
-        darkTheme = false
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxWidth()
-        ) { innerPadding ->
-            Column {
-
-
-                LazyRow(
-                    contentPadding = innerPadding
-                ) {
-                    items(line1) { item ->
-                        Box(
-                            modifier = Modifier
-                                .background(item)
-                                .size(128.dp, 64.dp)
-                        ) {}
-                    }
-                }
-                LazyRow(
-                    contentPadding = innerPadding
-                ) {
-                    items(line2) { item ->
-                        Box(
-                            modifier = Modifier
-                                .background(item)
-                                .size(128.dp, 64.dp)
-                        ) {}
-                    }
-                }
-                LazyRow(
-                    contentPadding = innerPadding
-                ) {
-                    items(line3) { item ->
-                        Box(
-                            modifier = Modifier
-                                .background(item)
-                                .size(128.dp, 64.dp)
-                        ) {}
-                    }
-                }
-                LazyRow(
-                    contentPadding = innerPadding
-                ) {
-                    items(line4) { item ->
-                        Box(
-                            modifier = Modifier
-                                .background(item)
-                                .size(128.dp, 64.dp)
-                        ) {}
-                    }
-                }
-                Text(
-                    text = "Large title",
-                    style = Typography.titleLarge,
-                )
-                Text(
-                    text = "Title",
-                    style = Typography.titleMedium,
-                )
-                Text(
-                    text = "Button",
-                    style = Typography.bodyLarge,
-                )
-                Text(
-                    text = "Body",
-                    style = Typography.bodyMedium,
-                )
-                Text(
-                    text = "Subhead",
-                    style = Typography.titleSmall,
-                )
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun BlackTheme(
-    line1 : List<Color> = listOf(
-        MaterialTheme.colorScheme.separator,
-        MaterialTheme.colorScheme.overlay
-    ),
-    line2 : List<Color> = listOf(
-        MaterialTheme.colorScheme.labelPrimary,
-        MaterialTheme.colorScheme.labelSecondary,
-        MaterialTheme.colorScheme.tertiaryLabel,
-        MaterialTheme.colorScheme.disable
-    ),
-    line3 : List<Color> = listOf(
-        MaterialTheme.colorScheme.red,
-        MaterialTheme.colorScheme.green,
-        MaterialTheme.colorScheme.blue,
-        MaterialTheme.colorScheme.gray,
-        MaterialTheme.colorScheme.grayLight,
-        MaterialTheme.colorScheme.white
-    ),
-    line4 : List<Color> = listOf(
-        MaterialTheme.colorScheme.backPrimary,
-        MaterialTheme.colorScheme.backSecondary,
-        MaterialTheme.colorScheme.backElevated
-    ),
-){
-    TodoAppTheme(
-        darkTheme = true
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxWidth()
-        ) { innerPadding ->
-            Column {
-
-
-                LazyRow(
-                    contentPadding = innerPadding
-                ) {
-                    items(line1) { item ->
-                        Box(
-                            modifier = Modifier
-                                .background(item)
-                                .size(128.dp, 64.dp)
-                        ) {}
-                    }
-                }
-                LazyRow(
-                    contentPadding = innerPadding
-                ) {
-                    items(line2) { item ->
-                        Box(
-                            modifier = Modifier
-                                .background(item)
-                                .size(128.dp, 64.dp)
-                        ) {}
-                    }
-                }
-                LazyRow(
-                    contentPadding = innerPadding
-                ) {
-                    items(line3) { item ->
-                        Box(
-                            modifier = Modifier
-                                .background(item)
-                                .size(128.dp, 64.dp)
-                        ) {}
-                    }
-                }
-                LazyRow(
-                    contentPadding = innerPadding
-                ) {
-                    items(line4) { item ->
-                        Box(
-                            modifier = Modifier
-                                .background(item)
-                                .size(128.dp, 64.dp)
-                        ) {}
-                    }
-                }
-                Text(
-                    text = "Large title",
-                    style = Typography.titleLarge,
-                )
-                Text(
-                    text = "Title",
-                    style = Typography.titleMedium,
-                )
-                Text(
-                    text = "Button",
-                    style = Typography.bodyLarge,
-                )
-                Text(
-                    text = "Body",
-                    style = Typography.bodyMedium,
-                )
-                Text(
-                    text = "Subhead",
-                    style = Typography.titleSmall,
-                )
-            }
-        }
-    }
 }

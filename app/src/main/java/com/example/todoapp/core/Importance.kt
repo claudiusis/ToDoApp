@@ -1,18 +1,26 @@
 package com.example.todoapp.core
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
+/*
+Class shows importance of toDoItem
+*/
 sealed class Importance(val value: String) {
     data object Low : Importance("Низкий")
     data object Normal : Importance("Нет")
     data object Urgent : Importance("!! Высокий")
-}
-
-object ChangeType {
-    fun changeDateFormat(date: Date) : String {
-        val outputFormat = SimpleDateFormat("d MMMM yyyy", Locale("ru"))
-        return outputFormat.format(date)
+    companion object {
+        fun fromString(value: String): Importance {
+            return when (value) {
+                "important" -> Urgent
+                "low" -> Low
+                else -> Normal
+            }
+        }
+        fun toString(importance: Importance): String {
+            return when (importance) {
+                is Urgent -> "important"
+                is Low -> "low"
+                else -> "basic"
+            }
+        }
     }
 }
