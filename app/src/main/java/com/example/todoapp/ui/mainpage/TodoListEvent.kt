@@ -8,4 +8,5 @@ sealed interface TodoListEvent {
     data object OnCreateNewPage : TodoListEvent
     data class OnInfoBtnClicked(val todoId : String) : TodoListEvent
     data object OnEyeChange : TodoListEvent
+    data object Reload : TodoListEvent
 }
