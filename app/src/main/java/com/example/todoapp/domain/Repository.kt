@@ -12,4 +12,5 @@ interface Repository {
     suspend fun addItem(item: TodoItem) : Result<Unit>
     suspend fun deleteItem(id: String) : Result<Unit>
     suspend fun updateItem(item: TodoItem) : Result<Unit>
+    suspend fun synchronizeServer()
 }

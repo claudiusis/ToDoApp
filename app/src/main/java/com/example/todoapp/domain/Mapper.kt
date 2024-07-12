@@ -27,7 +27,7 @@ object Mapper {
         )
     }
 
-    private fun TodoItem.toDto(): TodoItemDto {
+    fun TodoItem.toDto(): TodoItemDto {
         return TodoItemDto(
             id = id,
             text = text,

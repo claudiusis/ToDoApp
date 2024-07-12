@@ -2,6 +2,7 @@ package com.example.todoapp.data.network
 
 import com.example.todoapp.core.AppScope
 import com.example.todoapp.data.dto.PostItem
+import com.example.todoapp.data.dto.PostList
 import com.example.todoapp.data.dto.Response
 import com.example.todoapp.data.dto.ResponseItem
 import com.example.todoapp.domain.NetworkService
@@ -10,6 +11,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -65,6 +67,15 @@ class NetworkServiceImpl @Inject constructor(
             url{
                 appendPathSegments(postItem.element.id)
             }
+            contentType(ContentType.Application.Json)
+            setBody(postItem)
+        }
+        return response.body()
+    }
+
+    override suspend fun patchList(postItem: PostList, revision: Int): Response {
+        val response = client.patch(HttpRoutes.LIST){
+            header(HttpRoutes.Header, revision)
             contentType(ContentType.Application.Json)
             setBody(postItem)
         }

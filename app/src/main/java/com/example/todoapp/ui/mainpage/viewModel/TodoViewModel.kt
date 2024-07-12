@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 /*
@@ -116,7 +117,7 @@ class TodoViewModel @Inject constructor(
                 deleteNote(event.todo.id)
             }
             is TodoListEvent.ToggleCompleted -> {
-                upDateNote(event.todo.copy(isCompleted = !event.todo.isCompleted))
+                upDateNote(event.todo.copy(isCompleted = !event.todo.isCompleted, refactorDate = Date()))
             }
             is TodoListEvent.OnCreateNewPage -> {
                 router.navigate(R.id.action_mainPageFragment_to_taskPageFragment)

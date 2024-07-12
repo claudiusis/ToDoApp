@@ -3,9 +3,12 @@ package com.example.todoapp.data.repository
 import com.example.todoapp.core.AppScope
 import com.example.todoapp.core.Result
 import com.example.todoapp.data.db.ToDoDao
+import com.example.todoapp.data.dto.PostList
 import com.example.todoapp.data.dto.Response
+import com.example.todoapp.data.dto.TodoItemDto
 import com.example.todoapp.data.network.NetworkConnection
 import com.example.todoapp.domain.Mapper.toDomain
+import com.example.todoapp.domain.Mapper.toDto
 import com.example.todoapp.domain.Mapper.toPostItem
 import com.example.todoapp.domain.Mapper.toToDoItemEntity
 import com.example.todoapp.domain.NetworkService
@@ -41,7 +44,7 @@ class TodoItemsRepositoryImpl @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             networkConnection.observeNetworkState().collect { networkConnection ->
                 if (networkConnection){
-                    refresh()
+                    synchronizeServer()
                 }
             }
         }
@@ -203,6 +206,47 @@ class TodoItemsRepositoryImpl @Inject constructor(
                 Result.Error(Exception(errorMessage))
             }
             Result.Error(Exception(errorMessage))
+        }
+    }
+
+    override suspend fun synchronizeServer() {
+        withContext(Dispatchers.IO) {
+            errorMessage = "Ошибка синхронизации данных"
+            try {
+                val result: Response = service.getList()
+                revision = result.revision
+                val patchList = PostList(
+                    status = "ok",
+                    (_toDoListState.value as Result.Success).data.map { it.toDto() }
+                )
+                val patchResult = service.patchList(patchList, revision)
+                revision = patchResult.revision
+                val synchronizedList = patchResult.list.map { it.toDomain() }
+
+                db.upsertItem(synchronizedList.map { it.toToDoItemEntity() })
+
+                _toDoListState.update {
+                    Result.Success(
+                        synchronizedList
+                    )
+                }
+            } catch (e: ResponseException) {
+                val localList = db.getList()
+                _toDoListState.update {
+                    Result.Error(Exception("$errorMessage (${e.response.status})"))
+                }
+                _toDoListState.update {
+                    Result.Success(localList.map { it.toDomain() })
+                }
+            } catch (e: Exception) {
+                val localList = db.getList()
+                _toDoListState.update {
+                    Result.Error(Exception(errorMessage))
+                }
+                _toDoListState.update {
+                    Result.Success(localList.map { it.toDomain() })
+                }
+            }
         }
     }
 }
