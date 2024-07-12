@@ -136,9 +136,4 @@ class TodoViewModel @Inject constructor(
             }
         }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("QWERTY", "deleted 1 VM")
-    }
 }

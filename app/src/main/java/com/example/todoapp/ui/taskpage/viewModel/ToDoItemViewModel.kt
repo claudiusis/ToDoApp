@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todoapp.R
 import com.example.todoapp.core.Importance
 import com.example.todoapp.core.Result
 import com.example.todoapp.data.repository.TodoItem
@@ -98,6 +99,7 @@ class ToDoItemViewModel @AssistedInject constructor(
                         _uiState.update {
                             UiState.Success
                         }
+                        this@ToDoItemViewModel._toDoItem = result.data
                     }
                 }
             }
@@ -116,19 +118,20 @@ class ToDoItemViewModel @AssistedInject constructor(
             }
 
             is TaskEvent.OnBackClicked -> {
-                router.navigateBack()
+                router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
             }
 
             is TaskEvent.OnDeleteClickedChange -> {
                 if (deleteState) {
                     viewModelScope.launch(exceptionHandler) {
                         when (val result = repository.deleteItem(_toDoItem!!.id)) {
-                            is Result.Success -> router.navigateBack()
+                            is Result.Success -> router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
                             is Result.Error -> {
                                 val message = result.e.message ?: "Произошла ошибка"
                                 _uiState.update {
                                     UiState.Error(message)
                                 }
+                                router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
                             }
                         }
                     }
@@ -161,7 +164,7 @@ class ToDoItemViewModel @AssistedInject constructor(
                         }
                     }
                 }
-                router.navigateBack()
+                router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
             }
 
             is TaskEvent.OnImportanceChange -> {

@@ -6,10 +6,9 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/*
+/**
 * Worker for background tasks
 */
-
 class RequestWorker(
     context : Context,
     workParams : WorkerParameters

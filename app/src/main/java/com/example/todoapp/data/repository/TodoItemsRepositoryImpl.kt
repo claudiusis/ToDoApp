@@ -142,20 +142,10 @@ class TodoItemsRepositoryImpl @Inject constructor(
 
             db.upsertItem(item.toToDoItemEntity())
 
-            _toDoListState.update {
-                val list = (it as Result.Success).data + item
-                Result.Success(list)
-            }
-
             Result.Error(Exception("$errorMessage (${e.response.status})"))
         } catch (e: Exception) {
 
             db.upsertItem(item.toToDoItemEntity())
-
-            _toDoListState.update {
-                val list = (it as Result.Success).data + item
-                Result.Success(list)
-            }
 
             Result.Error(Exception(errorMessage))
         }
@@ -173,15 +163,16 @@ class TodoItemsRepositoryImpl @Inject constructor(
             revision = revisionResponse.revision
             service.deleteItem(id, revision)
             db.deleteItem(id)
+            refresh()
             Result.Success(Unit)
         } catch (e: ResponseException) {
             db.deleteItem(id)
+            refresh()
             Result.Error(Exception("$errorMessage (${e.response.status})"))
         } catch (e: Exception) {
             db.deleteItem(id)
-            Result.Error(Exception(errorMessage))
-        } finally {
             refresh()
+            Result.Error(Exception(errorMessage))
         }
     }
 
@@ -196,20 +187,22 @@ class TodoItemsRepositoryImpl @Inject constructor(
             val revisionResponse: Response = service.getList()
             revision = revisionResponse.revision
             service.putItem(item.toPostItem(), revision)
+            refresh()
             Result.Success(Unit)
         } catch (e: ResponseException) {
+            db.upsertItem(item.toToDoItemEntity())
+            refresh()
             _toDoListState.update {
                 Result.Error(Exception("$errorMessage (${e.response.status})"))
             }
             Result.Error(Exception("$errorMessage (${e.response.status})"))
         } catch (e: Exception) {
+            db.upsertItem(item.toToDoItemEntity())
+            refresh()
             _toDoListState.update {
                 Result.Error(Exception(errorMessage))
             }
             Result.Error(Exception(errorMessage))
-        } finally {
-            db.upsertItem(item.toToDoItemEntity())
-            refresh()
         }
     }
 }

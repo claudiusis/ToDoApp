@@ -8,7 +8,6 @@ import androidx.savedstate.SavedStateRegistryOwner
 /**
 * Factory for TodoItemViewModel
 */
-
 class ToDoItemViewModelFactory<T: ViewModel>(
     savedStateRegistryOwner: SavedStateRegistryOwner,
     private val create: (stateHandle: SavedStateHandle) -> T
