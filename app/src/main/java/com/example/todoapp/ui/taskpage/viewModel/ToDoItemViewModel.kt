@@ -6,13 +6,16 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHost
 import com.example.todoapp.core.Importance
 import com.example.todoapp.core.Result
 import com.example.todoapp.data.repository.TodoItem
 import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
+import com.example.todoapp.navigation.Router
 import com.example.todoapp.ui.mainpage.UiState
 import com.example.todoapp.ui.taskpage.TaskEvent
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,11 +27,16 @@ import java.util.UUID
 /*
 * ViewModel for second page
 */
-class ToDoItemViewModel(
-    private val savedStateHandle: SavedStateHandle?,
+class ToDoItemViewModel @AssistedInject constructor(
+    @Assisted private val savedStateHandle: SavedStateHandle?,
     private val repository: TodoItemsRepositoryImpl,
-    private val navHost: NavHost
+    private val router: Router
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(savedStateHandle: SavedStateHandle) : ToDoItemViewModel
+    }
 
     var _toDoItem by mutableStateOf<TodoItem?>(null)
         private set
@@ -78,6 +86,18 @@ class ToDoItemViewModel(
                         _uiState.update {
                             UiState.Error(message)
                         }
+                        result.data?.let {
+                            text = result.data.text
+                            deadline = result.data.deadLine
+                            _importance = result.data.importance
+                            deleteState = true
+                            deadline?.let {
+                                switchState = true
+                            }
+                        }
+                        _uiState.update {
+                            UiState.Success
+                        }
                     }
                 }
             }
@@ -96,14 +116,14 @@ class ToDoItemViewModel(
             }
 
             is TaskEvent.OnBackClicked -> {
-                navHost.navController.navigate(com.example.todoapp.R.id.action_taskPageFragment_to_mainPageFragment)
+                router.navigateBack()
             }
 
             is TaskEvent.OnDeleteClickedChange -> {
                 if (deleteState) {
                     viewModelScope.launch(exceptionHandler) {
                         when (val result = repository.deleteItem(_toDoItem!!.id)) {
-                            is Result.Success -> navHost.navController.navigate(com.example.todoapp.R.id.action_taskPageFragment_to_mainPageFragment)
+                            is Result.Success -> router.navigateBack()
                             is Result.Error -> {
                                 val message = result.e.message ?: "Произошла ошибка"
                                 _uiState.update {
@@ -132,7 +152,7 @@ class ToDoItemViewModel(
                         repository.updateItem(item)
                     }
                     when (result) {
-                        is Result.Success -> navHost.navController.navigate(com.example.todoapp.R.id.action_taskPageFragment_to_mainPageFragment)
+                        is Result.Success -> {}
                         is Result.Error -> {
                             val message = result.e.message ?: "Произошла ошибка"
                             _uiState.update {
@@ -141,6 +161,7 @@ class ToDoItemViewModel(
                         }
                     }
                 }
+                router.navigateBack()
             }
 
             is TaskEvent.OnImportanceChange -> {

@@ -145,13 +145,11 @@ fun TaskPage(
 
             is UiState.Error -> {
 
-                viewModel._toDoItem?.let {
-                    SuccessScreen(
-                        viewModel = viewModel,
-                        paddingValues,
-                        scrollState,
-                    )
-                }
+                SuccessScreen(
+                    viewModel = viewModel,
+                    paddingValues,
+                    scrollState,
+                )
 
                 ShowSnackBar(
                     message = uiState.error,
