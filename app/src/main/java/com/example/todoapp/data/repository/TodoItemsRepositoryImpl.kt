@@ -5,7 +5,6 @@ import com.example.todoapp.core.Result
 import com.example.todoapp.data.db.ToDoDao
 import com.example.todoapp.data.dto.PostList
 import com.example.todoapp.data.dto.Response
-import com.example.todoapp.data.dto.TodoItemDto
 import com.example.todoapp.data.network.NetworkConnection
 import com.example.todoapp.domain.Mapper.toDomain
 import com.example.todoapp.domain.Mapper.toDto
@@ -86,10 +85,6 @@ class TodoItemsRepositoryImpl @Inject constructor(
                 val localList = db.getList()
 
                 _toDoListState.update {
-                    Result.Error(Exception(errorMessage))
-                }
-
-                _toDoListState.update {
                     Result.Success(localList.map { it.toDomain() })
                 }
             }
@@ -120,8 +115,8 @@ class TodoItemsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addItem(item: TodoItem): Result<Unit> {
-        return try {
+    override suspend fun addItem(item: TodoItem): Result<Unit>  = withContext(Dispatchers.IO) {
+        try {
             errorMessage = "Ошибка добавления элемента списка с сервера"
 
             if (!networkConnection.isNetworkAvailable()) {
@@ -154,8 +149,8 @@ class TodoItemsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteItem(id: String): Result<Unit> {
-        return try {
+    override suspend fun deleteItem(id: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
             errorMessage = "Ошибка удаления элемента списка с сервера"
 
             if (!networkConnection.isNetworkAvailable()) {
@@ -179,8 +174,8 @@ class TodoItemsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateItem(item: TodoItem): Result<Unit> {
-        return try {
+    override suspend fun updateItem(item: TodoItem): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
             errorMessage = "Ошибка обновления элемента списка на сервере"
 
             if (!networkConnection.isNetworkAvailable()) {
@@ -190,21 +185,36 @@ class TodoItemsRepositoryImpl @Inject constructor(
             val revisionResponse: Response = service.getList()
             revision = revisionResponse.revision
             service.putItem(item.toPostItem(), revision)
+            db.upsertItem(item.toToDoItemEntity())
             refresh()
             Result.Success(Unit)
         } catch (e: ResponseException) {
             db.upsertItem(item.toToDoItemEntity())
-            refresh()
+
             _toDoListState.update {
                 Result.Error(Exception("$errorMessage (${e.response.status})"))
             }
+
+            _toDoListState.update {
+                Result.Success(
+                    db.getList().map { it.toDomain() }
+                )
+            }
+
             Result.Error(Exception("$errorMessage (${e.response.status})"))
         } catch (e: Exception) {
             db.upsertItem(item.toToDoItemEntity())
-            refresh()
+
             _toDoListState.update {
                 Result.Error(Exception(errorMessage))
             }
+
+            _toDoListState.update {
+                Result.Success(
+                    db.getList().map { it.toDomain() }
+                )
+            }
+
             Result.Error(Exception(errorMessage))
         }
     }
@@ -217,7 +227,7 @@ class TodoItemsRepositoryImpl @Inject constructor(
                 revision = result.revision
                 val patchList = PostList(
                     status = "ok",
-                    (_toDoListState.value as Result.Success).data.map { it.toDto() }
+                    db.getList().map { it.toDomain().toDto() }
                 )
                 val patchResult = service.patchList(patchList, revision)
                 revision = patchResult.revision
