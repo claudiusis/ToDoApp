@@ -1,8 +1,20 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-kapt")
     kotlin("plugin.serialization") version "2.0.0"
 }
+
+/*val maxApkSizeValue = 30
+val validationEnabledValue = true
+val analysisEnabledValue = true
+tgReporter {
+    token.set(providers.environmentVariable("TG_TOKEN"))
+    chatId.set(providers.environmentVariable("TG_CHAT"))
+    maxApkSize.set(maxApkSizeValue)
+    validationEnabled.set(validationEnabledValue)
+    analysisEnabled.set(analysisEnabledValue)
+}*/
 
 android {
     namespace = "com.example.todoapp"
@@ -71,6 +83,12 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation( libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.dagger)
+    implementation(libs.transportation.consumer)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+    kapt(libs.dagger.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,4 +96,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+kapt {
+    correctErrorTypes=true
 }

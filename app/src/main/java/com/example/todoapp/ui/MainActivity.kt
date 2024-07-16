@@ -5,8 +5,6 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.todoapp.R
-import com.example.todoapp.data.network.NetworkConnection.networkCallback
-import com.example.todoapp.data.network.NetworkConnection.networkRequest
 import com.example.todoapp.data.network.WorkCreator
 
 class MainActivity : AppCompatActivity() {
@@ -14,8 +12,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WorkCreator.createWork(this)
-        val connectivityManager = getSystemService(ConnectivityManager::class.java) as ConnectivityManager
-        connectivityManager.requestNetwork(networkRequest, networkCallback)
         setContentView(R.layout.activity_main)
 
     }

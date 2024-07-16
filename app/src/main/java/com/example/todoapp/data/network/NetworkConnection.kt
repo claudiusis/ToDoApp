@@ -1,42 +1,36 @@
 package com.example.todoapp.data.network
 
+import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.NetworkRequest
-import com.example.todoapp.data.repository.RepositoryProvider
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
-/*
+/**
 * Connectivity Manager for collecting network connection
 */
+class NetworkConnection(context: Context) {
+    private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-object NetworkConnection {
+    fun isNetworkAvailable(): Boolean {
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
 
-    val networkRequest: NetworkRequest = NetworkRequest.Builder()
-        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-        .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-        .build()
+    fun observeNetworkState(): Flow<Boolean> = callbackFlow {
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                trySend(true).isSuccess
+            }
 
-    val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network) {
-            super.onAvailable(network)
-            CoroutineScope(Dispatchers.IO).launch {
-                RepositoryProvider.repository.refresh()
+            override fun onLost(network: Network) {
+                trySend(false).isSuccess
             }
         }
-
-        override fun onCapabilitiesChanged(
-            network: Network,
-            networkCapabilities: NetworkCapabilities
-        ) {
-            super.onCapabilitiesChanged(network, networkCapabilities)
-        }
-        override fun onLost(network: Network) {
-            super.onLost(network)
-        }
+        connectivityManager.registerDefaultNetworkCallback(networkCallback)
+        awaitClose { connectivityManager.unregisterNetworkCallback(networkCallback) }
     }
 }

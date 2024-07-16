@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHost
 import com.example.todoapp.R
+import com.example.todoapp.core.ListFeatureScope
 import com.example.todoapp.core.Result
 import com.example.todoapp.data.repository.TodoItem
-import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
+import com.example.todoapp.domain.Repository
+import com.example.todoapp.navigation.Router
 import com.example.todoapp.ui.mainpage.TodoListEvent
 import com.example.todoapp.ui.mainpage.UiState
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -16,13 +17,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
 
 /*
 * Main viewModel for list
 */
-class TodoViewModel(
-    private  val repository: TodoItemsRepositoryImpl,
-                    private var navHost: NavHost
+@ListFeatureScope
+class TodoViewModel @Inject constructor(
+    private  val repository: Repository,
+    private var router: Router
 ) : ViewModel() {
 
     private val _toDoList : MutableStateFlow<List<TodoItem>> = MutableStateFlow(emptyList())
@@ -44,10 +48,6 @@ class TodoViewModel(
     init {
         collectToDoList()
         getList()
-    }
-
-    fun setNavHost(navHost: NavHost){
-        this.navHost = navHost
     }
 
     private fun getList() {
@@ -117,15 +117,14 @@ class TodoViewModel(
                 deleteNote(event.todo.id)
             }
             is TodoListEvent.ToggleCompleted -> {
-                upDateNote(event.todo.copy(isCompleted = !event.todo.isCompleted))
+                upDateNote(event.todo.copy(isCompleted = !event.todo.isCompleted, refactorDate = Date()))
             }
             is TodoListEvent.OnCreateNewPage -> {
-                navHost.navController.navigate(R.id.action_mainPageFragment_to_taskPageFragment)
+                router.navigate(R.id.action_mainPageFragment_to_taskPageFragment)
             }
             is TodoListEvent.OnInfoBtnClicked -> {
-                Log.d("QWERTY", navHost.toString())
                 val bundle = Bundle().apply { putString("id",  event.todoId) }
-                navHost.navController.navigate(R.id.action_mainPageFragment_to_taskPageFragment, bundle)
+                router.navigateTo(R.id.action_mainPageFragment_to_taskPageFragment, bundle)
             }
             is TodoListEvent.OnEyeChange -> {
                 _eyeVisible.update {

@@ -1,17 +1,27 @@
 package com.example.todoapp
 
 import android.app.Application
-import com.example.todoapp.data.network.KtorHttpClient
-import com.example.todoapp.data.network.NetworkService
-import com.example.todoapp.data.repository.RepositoryProvider
-import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
-/*
+import androidx.fragment.app.Fragment
+import com.example.todoapp.di.AppComponent
+import com.example.todoapp.di.DaggerAppComponent
+
+/**
 * Class of application (create network service and repository
 */
 class ToDoApp: Application() {
-    private val network = NetworkService(KtorHttpClient)
-    val repository : TodoItemsRepositoryImpl = TodoItemsRepositoryImpl(network)
-    init {
-        RepositoryProvider.repository = repository
+
+    val appComponent : AppComponent by lazy {
+        DaggerAppComponent
+            .factory()
+            .create(this)
     }
+
+    override fun onCreate() {
+        super.onCreate()
+        appComponent.inject(this)
+    }
+
 }
+
+fun Fragment.getAppComponent(): AppComponent =
+    (requireContext() as ToDoApp).appComponent

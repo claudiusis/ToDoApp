@@ -146,14 +146,7 @@ fun MainScreen(
                 is UiState.Loading -> ShowProgressBar()
                 is UiState.Error -> {
                     ShowSnackBar(message = uiState.error, scaffoldState = snackbarHostState, scope = scope)
-                    Column {
-                        ToDoList(innerPadding = innerPadding, viewModel = viewModel)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ReloadInfo(
-                            message = uiState.error,
-                            viewModel::onEvent,
-                        )
-                    }
+                    ToDoList(innerPadding = innerPadding, viewModel = viewModel)
                 }
 
                 is UiState.Success -> {

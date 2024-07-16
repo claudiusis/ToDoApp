@@ -7,19 +7,34 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavHost
-import com.example.todoapp.R
+import androidx.navigation.fragment.findNavController
 import com.example.todoapp.ToDoApp
 import com.example.todoapp.core.ToDoViewModelFactory
+import com.example.todoapp.di.ListFeatureComponent
 import com.example.todoapp.ui.core.TodoAppTheme
 import com.example.todoapp.ui.mainpage.composable.MainScreen
 import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
+import javax.inject.Inject
 
 class MainPageFragment : Fragment() {
 
+    private val listComponent : ListFeatureComponent by lazy {
+        (requireActivity().application as ToDoApp)
+            .appComponent
+            .listFeature()
+            .create(findNavController())
+    }
+
+    @Inject
+    lateinit var viewModelFactory: ToDoViewModelFactory
+
     private val viewModel: TodoViewModel by viewModels {
-        ToDoViewModelFactory((requireActivity().application as ToDoApp).repository,
-        requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHost)
+        viewModelFactory
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        listComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -35,10 +50,5 @@ class MainPageFragment : Fragment() {
                 }
             }
         }
-    }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val navHost = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHost
-        viewModel.setNavHost(navHost)
     }
 }
