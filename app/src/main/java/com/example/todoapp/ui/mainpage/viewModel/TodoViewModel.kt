@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.todoapp.R
 import com.example.todoapp.core.ListFeatureScope
 import com.example.todoapp.core.Result
@@ -111,6 +112,10 @@ class TodoViewModel @Inject constructor(
         }
     }
 
+    fun setNavController(navController: NavController){
+        router.setNavController(navController)
+    }
+
     fun onEvent(event: TodoListEvent){
         when(event){
             is TodoListEvent.DeleteTodo -> {
@@ -134,6 +139,12 @@ class TodoViewModel @Inject constructor(
             }
             is TodoListEvent.Reload -> {
                 getList()
+            }
+            is TodoListEvent.OnInfoAppBtnClicked -> {
+                router.navigate(R.id.action_main_page_fragment_to_appInfoFragment2)
+            }
+            is TodoListEvent.OnSettingsBtnClicked -> {
+                router.navigate(R.id.action_main_page_fragment_to_settingsPageFragment)
             }
         }
     }

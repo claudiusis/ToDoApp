@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ToDoApp"
 include(":app")
- 
+include(":ui-core")

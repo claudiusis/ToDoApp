@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/main_page_fragment">
 
@@ -11,6 +12,12 @@
         <action
             android:id="@+id/action_mainPageFragment_to_taskPageFragment"
             app:destination="@id/task_page_fragment" />
+        <action
+            android:id="@+id/action_main_page_fragment_to_appInfoFragment2"
+            app:destination="@id/appInfoFragment2" />
+        <action
+            android:id="@+id/action_main_page_fragment_to_settingsPageFragment"
+            app:destination="@id/settingsPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/task_page_fragment"
@@ -24,4 +31,21 @@
         android:name="id"
         app:argType="string"
         android:defaultValue="-1" />
+    <fragment
+        android:id="@+id/appInfoFragment2"
+        android:name="com.example.todoapp.ui.appinfopage.AppInfoFragment"
+        android:label="fragment_app_info"
+        tools:layout="@layout/fragment_app_info" >
+        <action
+            android:id="@+id/action_appInfoFragment2_to_main_page_fragment"
+            app:destination="@id/main_page_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsPageFragment"
+        android:name="com.example.todoapp.ui.settingspage.SettingsPageFragment"
+        android:label="SettingsPageFragment" >
+        <action
+            android:id="@+id/action_settingsPageFragment_to_main_page_fragment"
+            app:destination="@id/main_page_fragment" />
+    </fragment>
 </navigation>

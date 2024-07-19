@@ -48,8 +48,10 @@ import com.example.todoapp.R
 import com.example.todoapp.core.Importance
 import com.example.todoapp.data.repository.TodoItem
 import com.example.todoapp.domain.Mapper
+import com.example.todoapp.ui.mainpage.TodoListEvent
+import com.example.todoapp.ui.mainpage.UiState
+import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
 import com.example.todoapp.ui.core.TodoAppTheme
-import com.example.todoapp.ui.core.Typography
 import com.example.todoapp.ui.core.backPrimary
 import com.example.todoapp.ui.core.backSecondary
 import com.example.todoapp.ui.core.blue
@@ -59,9 +61,7 @@ import com.example.todoapp.ui.core.labelPrimary
 import com.example.todoapp.ui.core.red
 import com.example.todoapp.ui.core.tertiaryLabel
 import com.example.todoapp.ui.core.white
-import com.example.todoapp.ui.mainpage.TodoListEvent
-import com.example.todoapp.ui.mainpage.UiState
-import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
+import com.example.ui_core.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,7 +104,11 @@ fun MainScreen(
 
                         actions = {
                             if (scrollBehavior.state.collapsedFraction >= 0.5) {
-                                EyeIcon(eyeVisible = eyeVisible, viewModel = viewModel)
+                                EyeIcon(
+                                    eyeVisible = eyeVisible,
+                                    viewModel = viewModel,
+                                    (scrollBehavior.state.collapsedFraction < 0.5)
+                                )
                             }
                         },
 
@@ -145,7 +149,11 @@ fun MainScreen(
             when (uiState) {
                 is UiState.Loading -> ShowProgressBar()
                 is UiState.Error -> {
-                    ShowSnackBar(message = uiState.error, scaffoldState = snackbarHostState, scope = scope)
+                    ShowSnackBar(
+                        message = uiState.error,
+                        scaffoldState = snackbarHostState,
+                        scope = scope
+                    )
                     ToDoList(innerPadding = innerPadding, viewModel = viewModel)
                 }
 
@@ -169,11 +177,39 @@ fun TopBarTitle(
 ) {
     Column {
         if (scrollBehaviour.state.collapsedFraction < 0.5) {
-            Text(
-                text = "Мои дела",
-                style = Typography.titleLarge,
-                modifier = Modifier.padding(start = 26.dp)
-            )
+
+            Row {
+                Text(
+                    text = "Мои дела",
+                    style = Typography.titleLarge,
+                    modifier = Modifier.padding(start = 26.dp)
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Icon(
+                    modifier = Modifier.padding(
+                        end = 8.dp,
+                    ).clickable {
+                        viewModel.onEvent(TodoListEvent.OnSettingsBtnClicked)
+                    },
+                    tint = MaterialTheme.colorScheme.blue,
+                    painter = painterResource(id = R.drawable.settings_icon),
+                    contentDescription = "settings button",
+                )
+
+                Icon(
+                    modifier = Modifier.padding(
+                        end = 24.dp,
+                    ).clickable {
+                        viewModel.onEvent(TodoListEvent.OnInfoAppBtnClicked)
+                    },
+                    tint = MaterialTheme.colorScheme.blue,
+                    painter = painterResource(id = R.drawable.info_outline_btn),
+                    contentDescription = "info",
+                )
+
+            }
 
             Row {
                 Text(
@@ -185,7 +221,11 @@ fun TopBarTitle(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                EyeIcon(eyeVisible = eyeVisible, viewModel = viewModel)
+                EyeIcon(
+                    eyeVisible = eyeVisible,
+                    viewModel = viewModel,
+                    (scrollBehaviour.state.collapsedFraction < 0.5)
+                )
             }
         } else {
             Text(
@@ -198,14 +238,14 @@ fun TopBarTitle(
 }
 
 @Composable
-fun EyeIcon(eyeVisible: Boolean, viewModel: TodoViewModel) {
+fun EyeIcon(eyeVisible: Boolean, viewModel: TodoViewModel, isTopBarLarge: Boolean) {
     Icon(
         painter = if (eyeVisible) painterResource(id = R.drawable.visibility_icon) else painterResource(
             id = R.drawable.visibility_off_icon
         ),
         contentDescription = "Visibility eye",
         modifier = Modifier
-            .padding(top = 12.dp, end = 24.dp)
+            .padding(top = if (isTopBarLarge) 0.dp else 12.dp, end = 24.dp)
             .clickable {
                 viewModel.onEvent(TodoListEvent.OnEyeChange)
             },

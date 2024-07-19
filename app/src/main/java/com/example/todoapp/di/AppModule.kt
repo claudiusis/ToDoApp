@@ -2,7 +2,10 @@ package com.example.todoapp.di
 
 import android.content.Context
 import android.util.Log
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.room.Room
+import com.example.todoapp.R
 import com.example.todoapp.core.AppScope
 import com.example.todoapp.data.db.ToDoDao
 import com.example.todoapp.data.db.ToDoDatabase
@@ -11,6 +14,7 @@ import com.example.todoapp.data.network.NetworkServiceImpl
 import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
 import com.example.todoapp.domain.NetworkService
 import com.example.todoapp.domain.Repository
+import com.example.todoapp.ui.MainActivity
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -39,6 +43,15 @@ interface AppModule {
     fun bindNetwork(networkService: NetworkServiceImpl): NetworkService
 
     companion object {
+
+/*        @Provides
+        @AppScope
+        fun provideNavController(activity: MainActivity): NavController {
+            return activity.supportFragmentManager
+                .findFragmentById(R.id.nav_host_fragment)
+                ?.findNavController()
+                ?: throw IllegalStateException("NavController not found")
+        }*/
 
         @Provides
         @AppScope

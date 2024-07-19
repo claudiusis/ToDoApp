@@ -1,6 +1,8 @@
 package com.example.todoapp.ui.taskpage
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +21,15 @@ import com.example.todoapp.ui.taskpage.viewModel.ToDoItemViewModel
 
 class TaskPageFragment : Fragment() {
 
-    private val creationComponent : CreationFeatureComponent by lazy {
-        (requireActivity().application as ToDoApp)
+    private lateinit var creationComponent : CreationFeatureComponent
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("QWERTY", findNavController().toString())
+        creationComponent = (requireContext().applicationContext as ToDoApp)
             .appComponent
             .creationFeature()
             .create(findNavController())
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         creationComponent.inject(this)
     }
 
@@ -50,6 +52,11 @@ class TaskPageFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.setNavController(findNavController())
     }
 
     inline fun <reified T : ViewModel> Fragment.lazyViewModel(

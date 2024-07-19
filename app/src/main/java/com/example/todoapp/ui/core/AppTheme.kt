@@ -1,6 +1,5 @@
 package com.example.todoapp.ui.core
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
@@ -10,12 +9,35 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
+import com.example.ui_core.BackElevatedDark
+import com.example.ui_core.BackPrimaryDark
+import com.example.ui_core.BackPrimaryLight
+import com.example.ui_core.BackSecondaryDark
+import com.example.ui_core.Blue
+import com.example.ui_core.BlueBackSide
+import com.example.ui_core.DarkBackSide
+import com.example.ui_core.Gray
+import com.example.ui_core.GrayLightDark
+import com.example.ui_core.GrayLightLight
+import com.example.ui_core.Green
+import com.example.ui_core.LabelDisableDark
+import com.example.ui_core.LabelDisableLight
+import com.example.ui_core.LabelPrimaryDark
+import com.example.ui_core.LabelPrimaryLight
+import com.example.ui_core.LabelSecondaryDark
+import com.example.ui_core.LabelSecondaryLight
+import com.example.ui_core.LabelTertiaryDark
+import com.example.ui_core.LabelTertiaryLight
+import com.example.ui_core.Red
+import com.example.ui_core.RedLight
+import com.example.ui_core.SupportOverlayDark
+import com.example.ui_core.SupportOverlayLight
+import com.example.ui_core.SupportSeparatorDark
+import com.example.ui_core.SupportSeparatorLight
+import com.example.ui_core.Typography
+import com.example.ui_core.White
 
 
 private val DarkColorScheme = darkColorScheme(
@@ -118,14 +140,6 @@ fun TodoAppTheme(
 
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
-    }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
     }
 
     MaterialTheme(

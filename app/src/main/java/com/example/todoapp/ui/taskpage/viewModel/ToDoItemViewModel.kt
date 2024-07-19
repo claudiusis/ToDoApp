@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.todoapp.R
 import com.example.todoapp.core.Importance
 import com.example.todoapp.core.Result
@@ -45,7 +46,7 @@ class ToDoItemViewModel @AssistedInject constructor(
         private set
     var deadline by mutableStateOf<Date?>(null)
         private set
-    var _importance by mutableStateOf<Importance>(Importance.Normal)
+    var importance by mutableStateOf<Importance>(Importance.Normal)
         private set
 
     var switchState by mutableStateOf(false)
@@ -61,6 +62,10 @@ class ToDoItemViewModel @AssistedInject constructor(
         _uiState.value = UiState.Error(exception.message.toString())
     }
 
+    fun setNavController(navController: NavController){
+        router.setNavController(navController)
+    }
+
     init {
         val id = savedStateHandle?.get<String>("id") ?: "-1"
         if (id != "-1") {
@@ -70,7 +75,7 @@ class ToDoItemViewModel @AssistedInject constructor(
                         result.data?.let {
                             text = result.data.text
                             deadline = result.data.deadLine
-                            _importance = result.data.importance
+                            importance = result.data.importance
                             deleteState = true
                             deadline?.let {
                                 switchState = true
@@ -90,7 +95,7 @@ class ToDoItemViewModel @AssistedInject constructor(
                         result.data?.let {
                             text = result.data.text
                             deadline = result.data.deadLine
-                            _importance = result.data.importance
+                            importance = result.data.importance
                             deleteState = true
                             deadline?.let {
                                 switchState = true
@@ -143,7 +148,7 @@ class ToDoItemViewModel @AssistedInject constructor(
                     val item = TodoItem(
                         _toDoItem?.id ?: UUID.randomUUID().toString(),
                         text,
-                        _importance,
+                        importance,
                         deadline,
                         _toDoItem?.isCompleted ?: false,
                         _toDoItem?.creationDate ?: Date(),
@@ -168,7 +173,7 @@ class ToDoItemViewModel @AssistedInject constructor(
             }
 
             is TaskEvent.OnImportanceChange -> {
-                _importance = event.importance
+                importance = event.importance
             }
 
             is TaskEvent.OnDeadLineChange -> {

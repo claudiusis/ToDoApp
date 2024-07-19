@@ -1,7 +1,7 @@
 package com.example.todoapp.core
 
 import com.example.todoapp.data.repository.TodoItem
-/*
+/**
 * Network result class
 */
 sealed class Result<out T> {

@@ -53,10 +53,21 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
+    }
+    sourceSets {
+        getByName("main") {
+            assets {
+                srcDirs("src\\main\\assets", "src\\main\\assets")
+            }
+        }
     }
 }
 
 dependencies {
+
+    implementation(project(":ui-core"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -87,6 +98,10 @@ dependencies {
     implementation(libs.transportation.consumer)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.div)
+    implementation(libs.div.core)
+    implementation(libs.div.json)
+    implementation(libs.glide)
     kapt(libs.androidx.room.compiler)
     kapt(libs.dagger.compiler)
     testImplementation(libs.junit)
