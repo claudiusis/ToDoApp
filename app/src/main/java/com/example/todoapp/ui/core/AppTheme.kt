@@ -76,7 +76,7 @@ val ColorScheme.gray: Color
 
 val ColorScheme.grayLight: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) GrayLightDark else GrayLightLight
+    get() = if (ThemeCheck.isDarkTheme) GrayLightDark else GrayLightLight
 
 @get:Composable
 val ColorScheme.white: Color
@@ -84,39 +84,39 @@ val ColorScheme.white: Color
 
 val ColorScheme.separator: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) SupportSeparatorDark else SupportSeparatorLight
+    get() = if (ThemeCheck.isDarkTheme) SupportSeparatorDark else SupportSeparatorLight
 
 val ColorScheme.backPrimary: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) BackPrimaryDark else BackPrimaryLight
+    get() = if (ThemeCheck.isDarkTheme) BackPrimaryDark else BackPrimaryLight
 
 val ColorScheme.overlay: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) SupportOverlayDark else SupportOverlayLight
+    get() = if (ThemeCheck.isDarkTheme) SupportOverlayDark else SupportOverlayLight
 
 val ColorScheme.disable: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) LabelDisableDark else LabelDisableLight
+    get() = if (ThemeCheck.isDarkTheme) LabelDisableDark else LabelDisableLight
 
 val ColorScheme.labelPrimary: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) LabelPrimaryDark else LabelPrimaryLight
+    get() = if (ThemeCheck.isDarkTheme) LabelPrimaryDark else LabelPrimaryLight
 
 val ColorScheme.labelSecondary: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) LabelSecondaryDark else LabelSecondaryLight
+    get() = if (ThemeCheck.isDarkTheme) LabelSecondaryDark else LabelSecondaryLight
 
 val ColorScheme.tertiaryLabel: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) LabelTertiaryDark else LabelTertiaryLight
+    get() = if (ThemeCheck.isDarkTheme) LabelTertiaryDark else LabelTertiaryLight
 
 val ColorScheme.backSecondary: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) BackSecondaryDark else White
+    get() = if (ThemeCheck.isDarkTheme) BackSecondaryDark else White
 
 val ColorScheme.backElevated: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) BackElevatedDark else White
+    get() = if (ThemeCheck.isDarkTheme) BackElevatedDark else White
 
 @get:Composable
 val ColorScheme.lightRed: Color
@@ -124,7 +124,7 @@ val ColorScheme.lightRed: Color
 
 val ColorScheme.blueLight: Color
     @Composable
-    get() = if (isSystemInDarkTheme()) DarkBackSide else BlueBackSide
+    get() = if (ThemeCheck.isDarkTheme) DarkBackSide else BlueBackSide
 
 @Composable
 fun TodoAppTheme(
@@ -141,6 +141,8 @@ fun TodoAppTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    ThemeCheck.isDarkTheme = darkTheme
 
     MaterialTheme(
         colorScheme = colorScheme,

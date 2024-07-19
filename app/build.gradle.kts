@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.div.core)
     implementation(libs.div.json)
     implementation(libs.glide)
+    implementation(libs.picasso)
     kapt(libs.androidx.room.compiler)
     kapt(libs.dagger.compiler)
     testImplementation(libs.junit)

@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">ToDoApp</string>
     <string name="settings_title">Настройки</string>
+    <string name="cancel">Отменить</string>
     <string name="theme">Тема</string>
+    <string name="light">Всегда светлая</string>
+    <string name="dark">Всегда тёмная</string>
+    <string name="system">Как в системе</string>
     <string name="edit_hint">Что надо слелать…</string>
     <string name="no">Нет</string>
     <string name="low">Низкий</string>

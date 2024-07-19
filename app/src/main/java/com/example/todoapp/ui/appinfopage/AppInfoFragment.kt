@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,7 @@ import com.example.todoapp.navigation.Router
 import com.example.todoapp.ui.MainActivity
 import com.yandex.div.core.Div2Context
 import com.yandex.div.core.DivConfiguration
+import com.yandex.div.picasso.PicassoDivImageLoader
 import javax.inject.Inject
 
 /**
@@ -27,12 +29,16 @@ class AppInfoFragment : Fragment() {
 
     private lateinit var binding: FragmentAppInfoBinding
     private lateinit var fragmentComponent : AboutAppComponent
+    private lateinit var imageLoader: PicassoDivImageLoader
+    private lateinit var assertReader : AssetsReader
 
     @Inject
     lateinit var router: Router
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        imageLoader = PicassoDivImageLoader(requireContext())
+        assertReader = AssetsReader(requireContext())
         fragmentComponent = (requireContext().applicationContext as ToDoApp)
             .appComponent
             .aboutInfoFeature()
@@ -54,7 +60,7 @@ class AppInfoFragment : Fragment() {
 
         router.setNavController(findNavController())
 
-        val divJson = (activity as MainActivity).assetReader.read("infopage.json")
+        val divJson = assertReader.read("infopage.json")
         val templatesJson = divJson.optJSONObject("templates")
         val cardJson = divJson.getJSONObject("card")
 
@@ -75,7 +81,7 @@ class AppInfoFragment : Fragment() {
     }
 
     private fun createDivConfiguration() : DivConfiguration {
-        return DivConfiguration.Builder((activity as MainActivity).imageLoader!!)
+        return DivConfiguration.Builder(imageLoader)
             .visualErrorsEnabled(true)
             .actionHandler(NavigationDivActionHandler(router))
             .build()

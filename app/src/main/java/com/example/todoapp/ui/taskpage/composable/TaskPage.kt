@@ -1,11 +1,13 @@
 package com.example.todoapp.ui.taskpage.composable
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,8 +29,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -75,6 +79,7 @@ import com.example.todoapp.ui.mainpage.composable.ShowProgressBar
 import com.example.todoapp.ui.mainpage.composable.ShowSnackBar
 import com.example.todoapp.ui.taskpage.TaskEvent
 import com.example.todoapp.ui.taskpage.viewModel.ToDoItemViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -153,6 +158,7 @@ fun TaskPage(
                     viewModel = viewModel,
                     paddingValues,
                     scrollState,
+                    snackbarHostState,
                 )
             }
 
@@ -166,12 +172,85 @@ fun TaskPage(
                     viewModel = viewModel,
                     paddingValues,
                     scrollState,
+                    snackbarHostState,
                 )
 
                 ShowSnackBar(
                     message = uiState.error,
                     scaffoldState = snackbarHostState,
                     scope = scope
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ShowCancelSnackBar(
+    viewModel: ToDoItemViewModel,
+    scaffoldState: SnackbarHostState,
+){
+
+    var counter by remember { mutableStateOf(5) }
+    
+    AnimatedSnackbarHost(snackbarHostState = scaffoldState)
+
+    LaunchedEffect(key1 = Unit) {
+        while (counter>0){
+            delay(1000)
+            counter--
+        }
+    }
+
+    val text = if (viewModel.text.length<8) viewModel.text else viewModel.text.substring(0,8) + "..."
+
+    LaunchedEffect(counter) {
+        if (counter!=0) {
+            val result =  scaffoldState.showSnackbar(
+                message = "Удалить Имя_Дела ($text) $counter",
+                actionLabel = "Отменить"
+            )
+            if (result==SnackbarResult.ActionPerformed){
+                viewModel.onEvent(TaskEvent.ChangeSnackBarState)
+            }
+            scaffoldState.currentSnackbarData?.dismiss()
+        } else {
+            viewModel.onEvent(TaskEvent.OnDeleteClickedChange)
+        }
+    }
+}
+
+@Composable
+fun AnimatedSnackbarHost(
+    snackbarHostState: SnackbarHostState
+) {
+    SnackbarHost(
+        hostState = snackbarHostState
+    ) { data ->
+        AnimatedVisibility(
+            visible = true,
+            enter = slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = tween(durationMillis = 300)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { it },
+                animationSpec = tween(durationMillis = 300)
+            )
+        ) {
+            data.let {
+                Snackbar(
+                    action = {
+                        it.actionLabel?.let { actionLabel ->
+                            TextButton(onClick = { it.performAction() }) {
+                                Text(actionLabel)
+                            }
+                        }
+                    },
+                    content = {
+                        Text(it.message)
+                    },
+                    backgroundColor = Color.Gray
                 )
             }
         }
@@ -185,13 +264,13 @@ fun SuccessScreen(
     viewModel: ToDoItemViewModel,
     paddingValues: PaddingValues,
     scrollState: ScrollState,
+    snackbarHostState: SnackbarHostState
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var highlight by remember { mutableStateOf(false) }
-    var isHighImportance by remember { mutableStateOf(false) }
     val backgroundColor by animateColorAsState(
         targetValue = if (highlight) MaterialTheme.colorScheme.red.copy(alpha = 0.5f) else Color.Transparent,
         animationSpec = tween(durationMillis = 200)
@@ -323,10 +402,8 @@ fun SuccessScreen(
                             Divider(
                                 color = MaterialTheme.colorScheme.separator,
                                 thickness = 1.dp
-
                             )
                         }
-
                     }
                 }
             }
@@ -342,6 +419,14 @@ fun SuccessScreen(
         )
         DeleteButton(viewModel = viewModel)
     }
+
+    if (viewModel.isShowCancelSnackBar){
+        ShowCancelSnackBar(
+            viewModel = viewModel,
+            scaffoldState = snackbarHostState,
+        )
+    }
+
 }
 
 
@@ -394,10 +479,14 @@ fun DeadLineRow(viewModel: ToDoItemViewModel) {
 
 
 @Composable
-fun DeleteButton(viewModel: ToDoItemViewModel) {
+fun DeleteButton(
+    viewModel: ToDoItemViewModel
+    ) {
     TextButton(
         onClick = {
-            viewModel.onEvent(TaskEvent.OnDeleteClickedChange)
+            if (viewModel._toDoItem!=null){
+                viewModel.onEvent(TaskEvent.ChangeSnackBarState)
+            }
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.background,

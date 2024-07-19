@@ -74,95 +74,93 @@ fun MainScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    
+    Scaffold(
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .background(MaterialTheme.colorScheme.backPrimary),
+        topBar = {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(
+                        elevation = if (scrollBehavior.state.collapsedFraction > 0.5) 6.dp else 0.dp
+                    )
+                    .background(MaterialTheme.colorScheme.backPrimary)
+            ) {
+                LargeTopAppBar(
 
-    TodoAppTheme {
-        Scaffold(
-            modifier = Modifier
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .background(MaterialTheme.colorScheme.backPrimary),
-            topBar = {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(
-                            elevation = if (scrollBehavior.state.collapsedFraction > 0.5) 6.dp else 0.dp
+                    modifier = Modifier.background(MaterialTheme.colorScheme.backPrimary),
+
+                    title = {
+                        TopBarTitle(
+                            scrollBehaviour = scrollBehavior,
+                            viewModel = viewModel,
+                            counter = counter,
+                            eyeVisible = eyeVisible
                         )
-                        .background(MaterialTheme.colorScheme.backPrimary)
-                ) {
-                    LargeTopAppBar(
-
-                        modifier = Modifier.background(MaterialTheme.colorScheme.backPrimary),
-
-                        title = {
-                            TopBarTitle(
-                                scrollBehaviour = scrollBehavior,
-                                viewModel = viewModel,
-                                counter = counter,
-                                eyeVisible = eyeVisible
-                            )
-                        },
-
-                        actions = {
-                            if (scrollBehavior.state.collapsedFraction >= 0.5) {
-                                EyeIcon(
-                                    eyeVisible = eyeVisible,
-                                    viewModel = viewModel,
-                                    (scrollBehavior.state.collapsedFraction < 0.5)
-                                )
-                            }
-                        },
-
-                        colors = TopAppBarDefaults.largeTopAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.backPrimary,
-                            titleContentColor = MaterialTheme.colorScheme.labelPrimary,
-                            actionIconContentColor = MaterialTheme.colorScheme.blue
-                        ),
-
-                        scrollBehavior = scrollBehavior
-                    )
-                }
-            },
-
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-
-            floatingActionButton = {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .padding(bottom = 16.dp, end = 8.dp)
-                        .size(56.dp),
-                    containerColor = MaterialTheme.colorScheme.blue,
-                    contentColor = MaterialTheme.colorScheme.white,
-                    onClick = {
-                        viewModel.onEvent(TodoListEvent.OnCreateNewPage)
                     },
-                    shape = CircleShape
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add, contentDescription = "Add"
-                    )
-                }
+
+                    actions = {
+                        if (scrollBehavior.state.collapsedFraction >= 0.5) {
+                            EyeIcon(
+                                eyeVisible = eyeVisible,
+                                viewModel = viewModel,
+                                (scrollBehavior.state.collapsedFraction < 0.5)
+                            )
+                        }
+                    },
+
+                    colors = TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.backPrimary,
+                        titleContentColor = MaterialTheme.colorScheme.labelPrimary,
+                        actionIconContentColor = MaterialTheme.colorScheme.blue
+                    ),
+
+                    scrollBehavior = scrollBehavior
+                )
             }
-        ) { innerPadding ->
+        },
 
-            when (uiState) {
-                is UiState.Loading -> ShowProgressBar()
-                is UiState.Error -> {
-                    ShowSnackBar(
-                        message = uiState.error,
-                        scaffoldState = snackbarHostState,
-                        scope = scope
-                    )
-                    ToDoList(innerPadding = innerPadding, viewModel = viewModel)
-                }
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
 
-                is UiState.Success -> {
-                    ToDoList(innerPadding = innerPadding, viewModel = viewModel)
-                }
-
-                UiState.Dialog -> {}
+        floatingActionButton = {
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(bottom = 16.dp, end = 8.dp)
+                    .size(56.dp),
+                containerColor = MaterialTheme.colorScheme.blue,
+                contentColor = MaterialTheme.colorScheme.white,
+                onClick = {
+                    viewModel.onEvent(TodoListEvent.OnCreateNewPage)
+                },
+                shape = CircleShape
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add, contentDescription = "Add"
+                )
             }
+        }
+    ) { innerPadding ->
+
+        when (uiState) {
+            is UiState.Loading -> ShowProgressBar()
+            is UiState.Error -> {
+                ShowSnackBar(
+                    message = uiState.error,
+                    scaffoldState = snackbarHostState,
+                    scope = scope
+                )
+                ToDoList(innerPadding = innerPadding, viewModel = viewModel)
+            }
+
+            is UiState.Success -> {
+                ToDoList(innerPadding = innerPadding, viewModel = viewModel)
+            }
+
+            UiState.Dialog -> {}
         }
     }
 }

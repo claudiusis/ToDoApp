@@ -55,6 +55,9 @@ class ToDoItemViewModel @AssistedInject constructor(
     var deleteState by mutableStateOf<Boolean>(false)
         private set
 
+    var isShowCancelSnackBar by mutableStateOf(false)
+        private set
+
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
@@ -123,23 +126,15 @@ class ToDoItemViewModel @AssistedInject constructor(
             }
 
             is TaskEvent.OnBackClicked -> {
+                if (deleteState && isShowCancelSnackBar){
+                    deleteItem()
+                }
                 router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
             }
 
             is TaskEvent.OnDeleteClickedChange -> {
                 if (deleteState) {
-                    viewModelScope.launch(exceptionHandler) {
-                        when (val result = repository.deleteItem(_toDoItem!!.id)) {
-                            is Result.Success -> router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
-                            is Result.Error -> {
-                                val message = result.e.message ?: "Произошла ошибка"
-                                _uiState.update {
-                                    UiState.Error(message)
-                                }
-                                router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
-                            }
-                        }
-                    }
+                    deleteItem()
                 }
             }
 
@@ -207,6 +202,25 @@ class ToDoItemViewModel @AssistedInject constructor(
             is TaskEvent.OnTextDeadlineClicked -> {
                 _uiState.update {
                     UiState.Dialog
+                }
+            }
+
+            is TaskEvent.ChangeSnackBarState -> {
+                isShowCancelSnackBar = !isShowCancelSnackBar
+            }
+        }
+    }
+
+    private fun deleteItem(){
+        viewModelScope.launch(exceptionHandler) {
+            when (val result = repository.deleteItem(_toDoItem!!.id)) {
+                is Result.Success -> router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
+                is Result.Error -> {
+                    val message = result.e.message ?: "Произошла ошибка"
+                    _uiState.update {
+                        UiState.Error(message)
+                    }
+                    router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
                 }
             }
         }

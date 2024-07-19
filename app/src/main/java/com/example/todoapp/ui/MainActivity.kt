@@ -9,14 +9,14 @@ import androidx.navigation.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.ToDoApp
 import com.example.todoapp.data.network.WorkCreator
+import com.example.todoapp.domain.UserSettings
 import com.example.todoapp.ui.appinfopage.AssetsReader
 import com.example.todoapp.ui.mainpage.viewModel.NavControllerViewModel
 import com.yandex.div.glide.GlideDivImageLoader
+import com.yandex.div.picasso.PicassoDivImageLoader
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-
-    var imageLoader : GlideDivImageLoader? = GlideDivImageLoader(this)
-    val assetReader = AssetsReader(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +25,4 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        imageLoader = null
-
-    }
 }

@@ -42,6 +42,7 @@ div = { module = "com.yandex.div:div", version.ref = "div" }
 div-core = { module = "com.yandex.div:div-core", version.ref = "div" }
 div-json = { module = "com.yandex.div:div-json", version.ref = "div" }
 glide = { module = "com.yandex.div:glide", version.ref = "glide" }
+picasso = { module = "com.yandex.div:picasso", version.ref = "glide" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

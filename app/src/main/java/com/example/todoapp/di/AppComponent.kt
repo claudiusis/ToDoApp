@@ -15,6 +15,7 @@ interface AppComponent {
     fun listFeature() : ListFeatureComponent.Factory
     fun creationFeature() : CreationFeatureComponent.Factory
     fun aboutInfoFeature() : AboutAppComponent.Factory
+    fun settingsFeature() : SettingsComponent.Factory
 
     @Component.Factory
     interface Factory {

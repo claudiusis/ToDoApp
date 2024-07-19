@@ -15,4 +15,5 @@ sealed interface TaskEvent {
     data object OnSwitchChange : TaskEvent
     data object OnCancelClicked : TaskEvent
     data object OnTextDeadlineClicked : TaskEvent
+    data object ChangeSnackBarState : TaskEvent
 }

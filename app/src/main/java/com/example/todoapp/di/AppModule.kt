@@ -11,9 +11,11 @@ import com.example.todoapp.data.db.ToDoDao
 import com.example.todoapp.data.db.ToDoDatabase
 import com.example.todoapp.data.network.NetworkConnection
 import com.example.todoapp.data.network.NetworkServiceImpl
+import com.example.todoapp.data.preferences.UserSettingsImpl
 import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
 import com.example.todoapp.domain.NetworkService
 import com.example.todoapp.domain.Repository
+import com.example.todoapp.domain.UserSettings
 import com.example.todoapp.ui.MainActivity
 import dagger.Binds
 import dagger.Module
@@ -42,16 +44,11 @@ interface AppModule {
     @AppScope
     fun bindNetwork(networkService: NetworkServiceImpl): NetworkService
 
-    companion object {
+    @Binds
+    @AppScope
+    fun provideUserSettings(userSettingsImpl: UserSettingsImpl) : UserSettings
 
-/*        @Provides
-        @AppScope
-        fun provideNavController(activity: MainActivity): NavController {
-            return activity.supportFragmentManager
-                .findFragmentById(R.id.nav_host_fragment)
-                ?.findNavController()
-                ?: throw IllegalStateException("NavController not found")
-        }*/
+    companion object {
 
         @Provides
         @AppScope
@@ -109,5 +106,11 @@ interface AppModule {
         fun provideToDoDao(db: ToDoDatabase): ToDoDao {
             return db.toDoDao()
         }
+
+        @AppScope
+        @Provides
+        fun provideUserSettingsImpl(context: Context) =
+            UserSettingsImpl(context)
+
     }
 }
