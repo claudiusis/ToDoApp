@@ -1,23 +1,25 @@
 package com.example.todoapp.ui.appinfopage
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.todoapp.R
 import com.example.todoapp.ToDoApp
 import com.example.todoapp.databinding.FragmentAppInfoBinding
 import com.example.todoapp.di.AboutAppComponent
+import com.example.todoapp.domain.AppTheme
 import com.example.todoapp.navigation.Router
-import com.example.todoapp.ui.MainActivity
 import com.yandex.div.core.Div2Context
 import com.yandex.div.core.DivConfiguration
+import com.yandex.div.core.expression.variables.DivVariableController
+import com.yandex.div.data.Variable
 import com.yandex.div.picasso.PicassoDivImageLoader
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -31,6 +33,7 @@ class AppInfoFragment : Fragment() {
     private lateinit var fragmentComponent : AboutAppComponent
     private lateinit var imageLoader: PicassoDivImageLoader
     private lateinit var assertReader : AssetsReader
+    private lateinit var variableController : DivVariableController
 
     @Inject
     lateinit var router: Router
@@ -39,6 +42,7 @@ class AppInfoFragment : Fragment() {
         super.onAttach(context)
         imageLoader = PicassoDivImageLoader(requireContext())
         assertReader = AssetsReader(requireContext())
+        variableController = DivVariableController()
         fragmentComponent = (requireContext().applicationContext as ToDoApp)
             .appComponent
             .aboutInfoFeature()
@@ -64,6 +68,27 @@ class AppInfoFragment : Fragment() {
         val templatesJson = divJson.optJSONObject("templates")
         val cardJson = divJson.getJSONObject("card")
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            (requireContext().applicationContext as ToDoApp).settings.themeStream.collect{
+               val theme =  when(it){
+                    AppTheme.ModeSystem -> {
+                        if (isSystemInDarkTheme()){
+                            Variable.StringVariable("app_theme", "dark")
+                        } else {
+                            Variable.StringVariable("app_theme", "light")
+                        }
+                    }
+                    AppTheme.ModeDay -> {
+                        Variable.StringVariable("app_theme", "light")
+                    }
+                    AppTheme.ModeNight -> {
+                        Variable.StringVariable("app_theme", "dark")
+                    }
+               }
+               variableController.putOrUpdate(theme)
+            }
+        }
+
         val divContext = Div2Context(
             baseContext = requireActivity(),
             configuration = createDivConfiguration(),
@@ -82,9 +107,14 @@ class AppInfoFragment : Fragment() {
 
     private fun createDivConfiguration() : DivConfiguration {
         return DivConfiguration.Builder(imageLoader)
+            .divVariableController(variableController)
             .visualErrorsEnabled(true)
             .actionHandler(NavigationDivActionHandler(router))
             .build()
+    }
+
+    private fun isSystemInDarkTheme(): Boolean {
+        return (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 
 }

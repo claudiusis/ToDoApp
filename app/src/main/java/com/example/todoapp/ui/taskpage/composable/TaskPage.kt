@@ -3,8 +3,8 @@ package com.example.todoapp.ui.taskpage.composable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -63,7 +63,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.todoapp.R
 import com.example.todoapp.core.Importance
 import com.example.todoapp.domain.Mapper
-import com.example.ui_core.Typography
 import com.example.todoapp.ui.core.backSecondary
 import com.example.todoapp.ui.core.blue
 import com.example.todoapp.ui.core.blueLight
@@ -79,7 +78,7 @@ import com.example.todoapp.ui.mainpage.composable.ShowProgressBar
 import com.example.todoapp.ui.mainpage.composable.ShowSnackBar
 import com.example.todoapp.ui.taskpage.TaskEvent
 import com.example.todoapp.ui.taskpage.viewModel.ToDoItemViewModel
-import kotlinx.coroutines.CoroutineScope
+import com.example.ui_core.Typography
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -144,7 +143,21 @@ fun TaskPage(
         },
 
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                AnimatedVisibility(
+                    visible = viewModel.isShowCancelSnackBar,
+                    enter = slideInHorizontally(
+                        animationSpec = tween(durationMillis = 200)
+                    ),
+                    exit = slideOutHorizontally(
+                        animationSpec = tween(durationMillis = 200)
+                    )
+                ){
+                    Snackbar(
+                        snackbarData = data,
+                    )
+                }
+            }
         },
     ) { paddingValues ->
 
@@ -192,8 +205,6 @@ fun ShowCancelSnackBar(
 ){
 
     var counter by remember { mutableStateOf(5) }
-    
-    AnimatedSnackbarHost(snackbarHostState = scaffoldState)
 
     LaunchedEffect(key1 = Unit) {
         while (counter>0){
@@ -216,43 +227,6 @@ fun ShowCancelSnackBar(
             scaffoldState.currentSnackbarData?.dismiss()
         } else {
             viewModel.onEvent(TaskEvent.OnDeleteClickedChange)
-        }
-    }
-}
-
-@Composable
-fun AnimatedSnackbarHost(
-    snackbarHostState: SnackbarHostState
-) {
-    SnackbarHost(
-        hostState = snackbarHostState
-    ) { data ->
-        AnimatedVisibility(
-            visible = true,
-            enter = slideInVertically(
-                initialOffsetY = { it },
-                animationSpec = tween(durationMillis = 300)
-            ),
-            exit = slideOutVertically(
-                targetOffsetY = { it },
-                animationSpec = tween(durationMillis = 300)
-            )
-        ) {
-            data.let {
-                Snackbar(
-                    action = {
-                        it.actionLabel?.let { actionLabel ->
-                            TextButton(onClick = { it.performAction() }) {
-                                Text(actionLabel)
-                            }
-                        }
-                    },
-                    content = {
-                        Text(it.message)
-                    },
-                    backgroundColor = Color.Gray
-                )
-            }
         }
     }
 }
