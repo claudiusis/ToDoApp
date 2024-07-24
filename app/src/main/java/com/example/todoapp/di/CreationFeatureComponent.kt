@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import com.example.todoapp.core.CreationFeatureScope
 import com.example.todoapp.ui.taskpage.TaskPageFragment
 import com.example.todoapp.ui.taskpage.viewModel.ToDoItemViewModel
+import dagger.Binds
 import dagger.BindsInstance
 import dagger.Subcomponent
 

@@ -1,0 +1,240 @@
+{
+  "card": {
+    "variables": [
+      {
+        "name": "palette",
+        "type": "dict",
+        "value": {
+          "light": {
+            "text_color": "#000000",
+            "text_background": "#FFF7F6F2",
+            "arrow_url": "https://cdn1.iconfinder.com/data/icons/navigation-155/24/arrow_left-1024.png"
+          },
+          "dark": {
+            "text_color": "#FFFFFF",
+            "text_background": "#FF161618",
+            "arrow_url": "https://emrc-nt.ru/File%20upload/112.png"
+          }
+        }
+      }
+    ],
+    "log_id": "div2_info_page_card",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "container",
+          "width":{
+            "type": "match_parent"
+          },
+          "height": {
+            "type": "match_parent"
+          },
+          "background": [
+            {
+              "type": "solid",
+              "color": "@{getColorFromDict(palette, app_theme, 'text_background')}"
+            }
+          ],
+          "items": [
+            {
+              "margins": {
+                "top": 60
+              },
+              "type": "container",
+              "orientation": "horizontal",
+              "content_alignment_vertical": "center",
+              "items": [
+                {
+                  "margins": {
+                    "left": 16
+                  },
+                  "width":{
+                    "type": "fixed",
+                    "value": 24
+                  },
+                  "type": "image",
+                  "image_url": "@{getStringFromDict(palette, app_theme, 'arrow_url')}",
+                  "actions": [
+                    {
+                      "log_id": "navigate_back",
+                      "url": "custom-action://navigate?backNavigation"
+                    }
+                  ]
+                },
+                {
+                  "text_alignment_horizontal": "center",
+                  "paddings": {
+                    "end": 32
+                  },
+                  "font_weight": "bold",
+                  "font_size": 20,
+                  "type": "text",
+                  "text": "О приложении",
+                  "text_color" : "@{getColorFromDict(palette, app_theme, 'text_color')}"
+                }
+              ]
+            },
+            {
+              "margins": {
+                "top": 150
+              },
+              "type": "container",
+              "content_alignment_horizontal": "center",
+              "items": [
+                {
+                  "type": "image",
+                  "image_url": "https://i2.wp.com/coursework.vschool.io/content/images/2015/08/todo_logo.gif",
+                  "margins": {
+                    "top": 16,
+                    "bottom": 16,
+                    "start": 16,
+                    "end": 16
+                  },
+                  "paddings": {
+                    "top": 16,
+                    "bottom": 16,
+                    "start": 8,
+                    "end": 8
+                  },
+                  "tint_color": "#FFFFFF",
+                  "tint_mode": "multiply",
+                  "background": [
+                    {
+                      "type": "solid",
+                      "color": "#FFFFFF"
+                    }
+                  ],
+                  "border": {
+                    "shadow": {
+                      "offset": {
+                        "x": {
+                          "value": 0
+                        },
+                        "y": {
+                          "value": 0
+                        }
+                      }
+                    },
+                    "has_shadow": true,
+                    "corner_radius": 16
+                  },
+                  "width": {
+                    "type": "fixed",
+                    "value": 150
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "ToDo App",
+                  "text_color": "@{getColorFromDict(palette, app_theme, 'text_color')}",
+                  "font_size": 28,
+                  "width": {
+                    "type": "wrap_content"
+                  },
+                  "font_weight": "bold",
+                  "margins": {
+                    "top": 16,
+                    "bottom": 16
+                  }
+                },
+                {
+                  "width": {
+                    "type": "wrap_content"
+                  },
+                  "font_size": 14,
+                  "type": "text",
+                  "text": "Версия приложения:   1.0.0",
+                  "text_color": "@{getColorFromDict(palette, app_theme, 'text_color')}"
+                },
+                {
+                  "width": {
+                    "type": "wrap_content"
+                  },
+                  "type": "state",
+                  "id": "body.states",
+                  "states": [
+                    {
+                      "state_id": "hide",
+                      "div":{
+                        "type": "text",
+                        "text": "Показать больше",
+                        "text_color": "@{getColorFromDict(palette, app_theme, 'text_color')}",
+                        "width": {
+                          "type": "wrap_content"
+                        },
+                        "underline": "single",
+                        "margins": {
+                          "top": 16
+                        },
+                        "action": {
+                          "log_id": "changestate",
+                          "url": "div-action://set_state?state_id=0/body.states/visible"
+                        }
+                      }
+                    },
+                    {
+                      "state_id": "visible",
+                      "div":{
+                        "margins": {
+                          "top": 20,
+                          "bottom": 20,
+                          "start": 40,
+                          "end": 40
+                        },
+                        "width":{
+                          "type": "wrap_content"
+                        },
+                        "type": "container",
+                        "content_alignment_horizontal": "center",
+                        "alignment_horizontal": "center",
+                        "items": [
+                          {
+                            "margins": {
+                              "start": 10,
+                              "end": 10
+                            },
+                            "width": {
+                              "type": "wrap_content"
+                            },
+                            "ranges": [
+                              {
+                                "start": 0,
+                                "end": 8,
+                                "font_weight": "bold"
+                              }
+                            ],
+                            "type": "text",
+                            "text_color": "@{getColorFromDict(palette, app_theme, 'text_color')}",
+                            "text": "ToDo App - это удобное приложение для организации и\n управления задачами, которое помогает вам быть более\n продуктивными и организованнымт. С его помощью вы\n можете создавать список задач, устанавливать приоритеты,\n устанавливать сроки выполнения и отслеживать прогресс."
+                          },
+                          {
+                            "margins": {
+                              "top": 16
+                            },
+                            "font_size": 14,
+                            "underline": "single",
+                            "width": {
+                              "type": "wrap_content"
+                            },
+                            "type": "text",
+                            "text": "Скрыть",
+                            "text_color": "@{getColorFromDict(palette, app_theme, 'text_color')}",
+                            "action": {
+                              "log_id": "changestate",
+                              "url": "div-action://set_state?state_id=0/body.states/hide"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

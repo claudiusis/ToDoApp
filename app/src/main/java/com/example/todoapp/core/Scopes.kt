@@ -10,3 +10,9 @@ annotation class ListFeatureScope
 
 @Scope
 annotation class CreationFeatureScope
+
+@Scope
+annotation class AppInfoScope
+
+@Scope
+annotation class SettingsScope

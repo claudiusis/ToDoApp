@@ -3,6 +3,7 @@ package com.example.todoapp.di
 import androidx.navigation.NavController
 import com.example.todoapp.core.ListFeatureScope
 import com.example.todoapp.ui.mainpage.MainPageFragment
+import dagger.Binds
 import dagger.BindsInstance
 import dagger.Subcomponent
 

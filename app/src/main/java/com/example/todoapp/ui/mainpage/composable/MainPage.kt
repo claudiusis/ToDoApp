@@ -48,8 +48,10 @@ import com.example.todoapp.R
 import com.example.todoapp.core.Importance
 import com.example.todoapp.data.repository.TodoItem
 import com.example.todoapp.domain.Mapper
+import com.example.todoapp.ui.mainpage.TodoListEvent
+import com.example.todoapp.ui.mainpage.UiState
+import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
 import com.example.todoapp.ui.core.TodoAppTheme
-import com.example.todoapp.ui.core.Typography
 import com.example.todoapp.ui.core.backPrimary
 import com.example.todoapp.ui.core.backSecondary
 import com.example.todoapp.ui.core.blue
@@ -59,9 +61,7 @@ import com.example.todoapp.ui.core.labelPrimary
 import com.example.todoapp.ui.core.red
 import com.example.todoapp.ui.core.tertiaryLabel
 import com.example.todoapp.ui.core.white
-import com.example.todoapp.ui.mainpage.TodoListEvent
-import com.example.todoapp.ui.mainpage.UiState
-import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
+import com.example.ui_core.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,87 +74,93 @@ fun MainScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    
+    Scaffold(
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .background(MaterialTheme.colorScheme.backPrimary),
+        topBar = {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(
+                        elevation = if (scrollBehavior.state.collapsedFraction > 0.5) 6.dp else 0.dp
+                    )
+                    .background(MaterialTheme.colorScheme.backPrimary)
+            ) {
+                LargeTopAppBar(
 
-    TodoAppTheme {
-        Scaffold(
-            modifier = Modifier
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .background(MaterialTheme.colorScheme.backPrimary),
-            topBar = {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(
-                            elevation = if (scrollBehavior.state.collapsedFraction > 0.5) 6.dp else 0.dp
+                    modifier = Modifier.background(MaterialTheme.colorScheme.backPrimary),
+
+                    title = {
+                        TopBarTitle(
+                            scrollBehaviour = scrollBehavior,
+                            viewModel = viewModel,
+                            counter = counter,
+                            eyeVisible = eyeVisible
                         )
-                        .background(MaterialTheme.colorScheme.backPrimary)
-                ) {
-                    LargeTopAppBar(
-
-                        modifier = Modifier.background(MaterialTheme.colorScheme.backPrimary),
-
-                        title = {
-                            TopBarTitle(
-                                scrollBehaviour = scrollBehavior,
-                                viewModel = viewModel,
-                                counter = counter,
-                                eyeVisible = eyeVisible
-                            )
-                        },
-
-                        actions = {
-                            if (scrollBehavior.state.collapsedFraction >= 0.5) {
-                                EyeIcon(eyeVisible = eyeVisible, viewModel = viewModel)
-                            }
-                        },
-
-                        colors = TopAppBarDefaults.largeTopAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.backPrimary,
-                            titleContentColor = MaterialTheme.colorScheme.labelPrimary,
-                            actionIconContentColor = MaterialTheme.colorScheme.blue
-                        ),
-
-                        scrollBehavior = scrollBehavior
-                    )
-                }
-            },
-
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-
-            floatingActionButton = {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .padding(bottom = 16.dp, end = 8.dp)
-                        .size(56.dp),
-                    containerColor = MaterialTheme.colorScheme.blue,
-                    contentColor = MaterialTheme.colorScheme.white,
-                    onClick = {
-                        viewModel.onEvent(TodoListEvent.OnCreateNewPage)
                     },
-                    shape = CircleShape
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add, contentDescription = "Add"
-                    )
-                }
+
+                    actions = {
+                        if (scrollBehavior.state.collapsedFraction >= 0.5) {
+                            EyeIcon(
+                                eyeVisible = eyeVisible,
+                                viewModel = viewModel,
+                                (scrollBehavior.state.collapsedFraction < 0.5)
+                            )
+                        }
+                    },
+
+                    colors = TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.backPrimary,
+                        titleContentColor = MaterialTheme.colorScheme.labelPrimary,
+                        actionIconContentColor = MaterialTheme.colorScheme.blue
+                    ),
+
+                    scrollBehavior = scrollBehavior
+                )
             }
-        ) { innerPadding ->
+        },
 
-            when (uiState) {
-                is UiState.Loading -> ShowProgressBar()
-                is UiState.Error -> {
-                    ShowSnackBar(message = uiState.error, scaffoldState = snackbarHostState, scope = scope)
-                    ToDoList(innerPadding = innerPadding, viewModel = viewModel)
-                }
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
 
-                is UiState.Success -> {
-                    ToDoList(innerPadding = innerPadding, viewModel = viewModel)
-                }
-
-                UiState.Dialog -> {}
+        floatingActionButton = {
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(bottom = 16.dp, end = 8.dp)
+                    .size(56.dp),
+                containerColor = MaterialTheme.colorScheme.blue,
+                contentColor = MaterialTheme.colorScheme.white,
+                onClick = {
+                    viewModel.onEvent(TodoListEvent.OnCreateNewPage)
+                },
+                shape = CircleShape
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add, contentDescription = "Add"
+                )
             }
+        }
+    ) { innerPadding ->
+
+        when (uiState) {
+            is UiState.Loading -> ShowProgressBar()
+            is UiState.Error -> {
+                ShowSnackBar(
+                    message = uiState.error,
+                    scaffoldState = snackbarHostState,
+                    scope = scope
+                )
+                ToDoList(innerPadding = innerPadding, viewModel = viewModel)
+            }
+
+            is UiState.Success -> {
+                ToDoList(innerPadding = innerPadding, viewModel = viewModel)
+            }
+
+            UiState.Dialog -> {}
         }
     }
 }
@@ -169,11 +175,39 @@ fun TopBarTitle(
 ) {
     Column {
         if (scrollBehaviour.state.collapsedFraction < 0.5) {
-            Text(
-                text = "Мои дела",
-                style = Typography.titleLarge,
-                modifier = Modifier.padding(start = 26.dp)
-            )
+
+            Row {
+                Text(
+                    text = "Мои дела",
+                    style = Typography.titleLarge,
+                    modifier = Modifier.padding(start = 26.dp)
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Icon(
+                    modifier = Modifier.padding(
+                        end = 8.dp,
+                    ).clickable {
+                        viewModel.onEvent(TodoListEvent.OnSettingsBtnClicked)
+                    },
+                    tint = MaterialTheme.colorScheme.blue,
+                    painter = painterResource(id = R.drawable.settings_icon),
+                    contentDescription = "settings button",
+                )
+
+                Icon(
+                    modifier = Modifier.padding(
+                        end = 24.dp,
+                    ).clickable {
+                        viewModel.onEvent(TodoListEvent.OnInfoAppBtnClicked)
+                    },
+                    tint = MaterialTheme.colorScheme.blue,
+                    painter = painterResource(id = R.drawable.info_outline_btn),
+                    contentDescription = "info",
+                )
+
+            }
 
             Row {
                 Text(
@@ -185,7 +219,11 @@ fun TopBarTitle(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                EyeIcon(eyeVisible = eyeVisible, viewModel = viewModel)
+                EyeIcon(
+                    eyeVisible = eyeVisible,
+                    viewModel = viewModel,
+                    (scrollBehaviour.state.collapsedFraction < 0.5)
+                )
             }
         } else {
             Text(
@@ -198,14 +236,14 @@ fun TopBarTitle(
 }
 
 @Composable
-fun EyeIcon(eyeVisible: Boolean, viewModel: TodoViewModel) {
+fun EyeIcon(eyeVisible: Boolean, viewModel: TodoViewModel, isTopBarLarge: Boolean) {
     Icon(
         painter = if (eyeVisible) painterResource(id = R.drawable.visibility_icon) else painterResource(
             id = R.drawable.visibility_off_icon
         ),
         contentDescription = "Visibility eye",
         modifier = Modifier
-            .padding(top = 12.dp, end = 24.dp)
+            .padding(top = if (isTopBarLarge) 0.dp else 12.dp, end = 24.dp)
             .clickable {
                 viewModel.onEvent(TodoListEvent.OnEyeChange)
             },

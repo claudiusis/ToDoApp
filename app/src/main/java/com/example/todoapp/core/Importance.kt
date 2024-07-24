@@ -1,6 +1,6 @@
 package com.example.todoapp.core
 
-/*
+/**
 Class shows importance of toDoItem
 */
 sealed class Importance(val value: String) {
@@ -20,6 +20,13 @@ sealed class Importance(val value: String) {
                 is Urgent -> "important"
                 is Low -> "low"
                 else -> "basic"
+            }
+        }
+        fun fromUiString(string: String) : Importance {
+            return when(string) {
+                "Нет" -> Normal
+                "Низкий" -> Low
+                else -> Urgent
             }
         }
     }

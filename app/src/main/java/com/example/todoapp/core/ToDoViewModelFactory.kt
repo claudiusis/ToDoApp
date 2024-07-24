@@ -13,6 +13,7 @@ Factory for ToDoViewModel
 class ToDoViewModelFactory @Inject constructor(
     private val repository: Repository,
     private val router: Router) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TodoViewModel::class.java)){
             return TodoViewModel(repository, router) as T

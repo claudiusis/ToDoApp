@@ -2,15 +2,21 @@ package com.example.todoapp.di
 
 import android.content.Context
 import android.util.Log
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.room.Room
+import com.example.todoapp.R
 import com.example.todoapp.core.AppScope
 import com.example.todoapp.data.db.ToDoDao
 import com.example.todoapp.data.db.ToDoDatabase
 import com.example.todoapp.data.network.NetworkConnection
 import com.example.todoapp.data.network.NetworkServiceImpl
+import com.example.todoapp.data.preferences.UserSettingsImpl
 import com.example.todoapp.data.repository.TodoItemsRepositoryImpl
 import com.example.todoapp.domain.NetworkService
 import com.example.todoapp.domain.Repository
+import com.example.todoapp.domain.UserSettings
+import com.example.todoapp.ui.MainActivity
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -37,6 +43,10 @@ interface AppModule {
     @Binds
     @AppScope
     fun bindNetwork(networkService: NetworkServiceImpl): NetworkService
+
+    @Binds
+    @AppScope
+    fun provideUserSettings(userSettingsImpl: UserSettingsImpl) : UserSettings
 
     companion object {
 
@@ -96,5 +106,11 @@ interface AppModule {
         fun provideToDoDao(db: ToDoDatabase): ToDoDao {
             return db.toDoDao()
         }
+
+        @AppScope
+        @Provides
+        fun provideUserSettingsImpl(context: Context) =
+            UserSettingsImpl(context)
+
     }
 }

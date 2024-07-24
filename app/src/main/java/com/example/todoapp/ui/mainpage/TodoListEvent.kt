@@ -6,6 +6,8 @@ sealed interface TodoListEvent {
     data class DeleteTodo(val todo: TodoItem) : TodoListEvent
     data class ToggleCompleted(val todo: TodoItem) : TodoListEvent
     data object OnCreateNewPage : TodoListEvent
+    data object OnInfoAppBtnClicked : TodoListEvent
+    data object OnSettingsBtnClicked : TodoListEvent
     data class OnInfoBtnClicked(val todoId : String) : TodoListEvent
     data object OnEyeChange : TodoListEvent
     data object Reload : TodoListEvent
