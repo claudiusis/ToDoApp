@@ -11,7 +11,6 @@ import com.example.todoapp.ToDoApp
 import com.example.todoapp.data.network.WorkCreator
 import com.example.todoapp.domain.UserSettings
 import com.example.todoapp.ui.appinfopage.AssetsReader
-import com.example.todoapp.ui.mainpage.viewModel.NavControllerViewModel
 import com.yandex.div.glide.GlideDivImageLoader
 import com.yandex.div.picasso.PicassoDivImageLoader
 import javax.inject.Inject

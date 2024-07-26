@@ -55,6 +55,9 @@
                   },
                   "type": "image",
                   "image_url": "@{getStringFromDict(palette, app_theme, 'arrow_url')}",
+                  "accessibility": {
+                    "description": "Назад"
+                  },
                   "actions": [
                     {
                       "log_id": "navigate_back",
@@ -81,10 +84,14 @@
               },
               "type": "container",
               "content_alignment_horizontal": "center",
+              "alignment_horizontal": "center",
               "items": [
                 {
                   "type": "image",
                   "image_url": "https://i2.wp.com/coursework.vschool.io/content/images/2015/08/todo_logo.gif",
+                  "accessibility": {
+                    "description": "Логотип приложения"
+                  },
                   "margins": {
                     "top": 16,
                     "bottom": 16,
@@ -148,17 +155,19 @@
                   "text_color": "@{getColorFromDict(palette, app_theme, 'text_color')}"
                 },
                 {
-                  "width": {
-                    "type": "wrap_content"
-                  },
                   "type": "state",
                   "id": "body.states",
+                  "width": {
+                    "type": "match_parent"
+                  },
+                  "content_alignment_horizontal": "center",
                   "states": [
                     {
                       "state_id": "hide",
                       "div":{
                         "type": "text",
                         "text": "Показать больше",
+                        "alignment_horizontal": "center",
                         "text_color": "@{getColorFromDict(palette, app_theme, 'text_color')}",
                         "width": {
                           "type": "wrap_content"
@@ -178,16 +187,13 @@
                       "div":{
                         "margins": {
                           "top": 20,
-                          "bottom": 20,
-                          "start": 40,
-                          "end": 40
-                        },
-                        "width":{
-                          "type": "wrap_content"
+                          "bottom": 20
                         },
                         "type": "container",
                         "content_alignment_horizontal": "center",
-                        "alignment_horizontal": "center",
+                        "width":{
+                          "type": "match_parent"
+                        },
                         "items": [
                           {
                             "margins": {
@@ -195,7 +201,7 @@
                               "end": 10
                             },
                             "width": {
-                              "type": "wrap_content"
+                              "type": "match_parent"
                             },
                             "ranges": [
                               {
@@ -204,18 +210,21 @@
                                 "font_weight": "bold"
                               }
                             ],
+                            "text_alignment_horizontal": "start",
+                            "font_size": 16,
                             "type": "text",
                             "text_color": "@{getColorFromDict(palette, app_theme, 'text_color')}",
-                            "text": "ToDo App - это удобное приложение для организации и\n управления задачами, которое помогает вам быть более\n продуктивными и организованнымт. С его помощью вы\n можете создавать список задач, устанавливать приоритеты,\n устанавливать сроки выполнения и отслеживать прогресс."
+                            "text": "ToDo App - это удобное приложение для организации и управления задачами, которое помогает вам быть более продуктивными и организованными. С его помощью вы можете создавать список задач, устанавливать приоритеты,\n устанавливать сроки выполнения и отслеживать прогресс."
                           },
                           {
-                            "margins": {
-                              "top": 16
-                            },
-                            "font_size": 14,
+                            "font_size": 16,
                             "underline": "single",
                             "width": {
                               "type": "wrap_content"
+                            },
+                            "margins": {
+                              "top": 8,
+                              "bottom": 24
                             },
                             "type": "text",
                             "text": "Скрыть",
