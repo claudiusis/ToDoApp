@@ -129,7 +129,7 @@ class ToDoItemViewModel @AssistedInject constructor(
                 if (deleteState && isShowCancelSnackBar){
                     deleteItem()
                 }
-                router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
+                router.navigateBack()
             }
 
             is TaskEvent.OnDeleteClickedChange -> {
@@ -163,8 +163,8 @@ class ToDoItemViewModel @AssistedInject constructor(
                             }
                         }
                     }
+                    router.navigateBack()
                 }
-                router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
             }
 
             is TaskEvent.OnImportanceChange -> {
@@ -214,13 +214,13 @@ class ToDoItemViewModel @AssistedInject constructor(
     private fun deleteItem(){
         viewModelScope.launch(exceptionHandler) {
             when (val result = repository.deleteItem(_toDoItem!!.id)) {
-                is Result.Success -> router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
+                is Result.Success -> router.navigateBack()
                 is Result.Error -> {
                     val message = result.e.message ?: "Произошла ошибка"
                     _uiState.update {
                         UiState.Error(message)
                     }
-                    router.navigate(R.id.action_taskPageFragment_to_mainPageFragment)
+                    router.navigateBack()
                 }
             }
         }

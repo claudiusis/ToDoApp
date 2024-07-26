@@ -75,7 +75,7 @@ fun SettingPage(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.arrow_back_icon),
-                        contentDescription = "Back arrow"
+                        contentDescription = stringResource(id = R.string.close)
                     )
                 }
                 Spacer(modifier = Modifier.weight(0.5f))

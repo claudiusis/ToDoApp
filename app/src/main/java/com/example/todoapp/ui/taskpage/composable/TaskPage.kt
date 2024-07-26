@@ -132,7 +132,7 @@ fun TaskPage(
                         }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.close_btn),
-                                contentDescription = "close",
+                                contentDescription = stringResource(id = R.string.close),
                             )
                         }
                     },
@@ -457,6 +457,7 @@ fun DeleteButton(
     viewModel: ToDoItemViewModel
     ) {
     TextButton(
+        enabled = (viewModel._toDoItem!=null),
         onClick = {
             if (viewModel._toDoItem!=null){
                 viewModel.onEvent(TaskEvent.ChangeSnackBarState)
@@ -464,13 +465,15 @@ fun DeleteButton(
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.background,
-            contentColor = if (viewModel.deleteState) MaterialTheme.colorScheme.red else MaterialTheme.colorScheme.disable
+            contentColor = MaterialTheme.colorScheme.red,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = MaterialTheme.colorScheme.disable
         ),
         modifier = Modifier.padding(top = 16.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.delete_icon),
-            contentDescription = "Garbage",
+            contentDescription = stringResource(id = R.string.garbage),
             modifier = Modifier.padding(start = 8.dp)
         )
         Text(

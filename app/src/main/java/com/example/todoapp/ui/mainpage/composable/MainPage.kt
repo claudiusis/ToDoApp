@@ -2,6 +2,7 @@ package com.example.todoapp.ui.mainpage.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -40,18 +43,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.todoapp.R
 import com.example.todoapp.core.Importance
 import com.example.todoapp.data.repository.TodoItem
 import com.example.todoapp.domain.Mapper
-import com.example.todoapp.ui.mainpage.TodoListEvent
-import com.example.todoapp.ui.mainpage.UiState
-import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
-import com.example.todoapp.ui.core.TodoAppTheme
 import com.example.todoapp.ui.core.backPrimary
 import com.example.todoapp.ui.core.backSecondary
 import com.example.todoapp.ui.core.blue
@@ -61,7 +72,11 @@ import com.example.todoapp.ui.core.labelPrimary
 import com.example.todoapp.ui.core.red
 import com.example.todoapp.ui.core.tertiaryLabel
 import com.example.todoapp.ui.core.white
+import com.example.todoapp.ui.mainpage.TodoListEvent
+import com.example.todoapp.ui.mainpage.UiState
+import com.example.todoapp.ui.mainpage.viewModel.TodoViewModel
 import com.example.ui_core.Typography
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +89,7 @@ fun MainScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    
+
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -139,7 +154,8 @@ fun MainScreen(
                 shape = CircleShape
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add, contentDescription = "Add"
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(id = R.string.fab_description)
                 )
             }
         }
@@ -178,7 +194,7 @@ fun TopBarTitle(
 
             Row {
                 Text(
-                    text = "Мои дела",
+                    text = stringResource(id = R.string.my_todos),
                     style = Typography.titleLarge,
                     modifier = Modifier.padding(start = 26.dp)
                 )
@@ -186,27 +202,32 @@ fun TopBarTitle(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Icon(
-                    modifier = Modifier.padding(
-                        end = 8.dp,
-                    ).clickable {
-                        viewModel.onEvent(TodoListEvent.OnSettingsBtnClicked)
-                    },
+                    modifier = Modifier
+                        .padding(
+                            top = 8.dp,
+                            end = 8.dp,
+                        )
+                        .clickable {
+                            viewModel.onEvent(TodoListEvent.OnSettingsBtnClicked)
+                        },
                     tint = MaterialTheme.colorScheme.blue,
                     painter = painterResource(id = R.drawable.settings_icon),
-                    contentDescription = "settings button",
+                    contentDescription = stringResource(id = R.string.settings_icon_description),
                 )
 
                 Icon(
-                    modifier = Modifier.padding(
-                        end = 24.dp,
-                    ).clickable {
-                        viewModel.onEvent(TodoListEvent.OnInfoAppBtnClicked)
-                    },
+                    modifier = Modifier
+                        .padding(
+                            top = 8.dp,
+                            end = 24.dp,
+                        )
+                        .clickable {
+                            viewModel.onEvent(TodoListEvent.OnInfoAppBtnClicked)
+                        },
                     tint = MaterialTheme.colorScheme.blue,
                     painter = painterResource(id = R.drawable.info_outline_btn),
-                    contentDescription = "info",
+                    contentDescription = stringResource(id = R.string.info_icon_description),
                 )
-
             }
 
             Row {
@@ -227,7 +248,7 @@ fun TopBarTitle(
             }
         } else {
             Text(
-                text = "Мои дела",
+                text = stringResource(id = R.string.my_todos),
                 style = Typography.titleMedium,
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
             )
@@ -241,7 +262,9 @@ fun EyeIcon(eyeVisible: Boolean, viewModel: TodoViewModel, isTopBarLarge: Boolea
         painter = if (eyeVisible) painterResource(id = R.drawable.visibility_icon) else painterResource(
             id = R.drawable.visibility_off_icon
         ),
-        contentDescription = "Visibility eye",
+        contentDescription = if (eyeVisible) stringResource(id = R.string.eye_icon_description) else stringResource(
+            id = R.string.eye_off_icon_description
+        ),
         modifier = Modifier
             .padding(top = if (isTopBarLarge) 0.dp else 12.dp, end = 24.dp)
             .clickable {
@@ -312,72 +335,102 @@ fun ToDoList(
 }
 
 @Composable
-fun TodoColumnItem(item: TodoItem, onEvent: (TodoListEvent) -> Unit) {
+fun TodoColumnItem(
+    item: TodoItem= TodoItem(
+        "1",
+        "text",
+        Importance.Urgent,
+        deadLine = Date(),
+        isCompleted = true,
+        creationDate = Date()
+    ),
+    onEvent: (TodoListEvent) -> Unit ={}
+) {
     Row(
-        modifier = Modifier.background(MaterialTheme.colorScheme.backSecondary),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.backSecondary),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Checkbox(
-            checked = item.isCompleted,
-            onCheckedChange = {
-                onEvent(TodoListEvent.ToggleCompleted(item))
-            },
-            colors = CheckboxDefaults.colors(
-                checkedColor = MaterialTheme.colorScheme.green,
-                uncheckedColor = if (item.importance == Importance.Urgent) MaterialTheme.colorScheme.red
-                else MaterialTheme.colorScheme.tertiaryLabel,
-                checkmarkColor = MaterialTheme.colorScheme.background,
-                disabledCheckedColor = MaterialTheme.colorScheme.tertiaryLabel,
-                disabledUncheckedColor = if (item.importance == Importance.Urgent) MaterialTheme.colorScheme.red
-                else MaterialTheme.colorScheme.tertiaryLabel,
-            ),
-        )
         Row(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(vertical = 12.dp),
-        ) {
-            ImportanceIcon(item = item)
-            Column(
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                Text(
-                    modifier = Modifier.clickable {
-                        onEvent(TodoListEvent.ToggleCompleted(item))
-                    },
-                    color = if (item.isCompleted) MaterialTheme.colorScheme.tertiaryLabel
-                    else MaterialTheme.colorScheme.labelPrimary,
-                    style = Typography.bodyMedium,
-                    text = item.text,
-                    textDecoration = if (item.isCompleted) {
-                        TextDecoration.LineThrough
+                .semantics(mergeDescendants = true) {
+                    liveRegion = LiveRegionMode.Polite
+                    contentDescription = item.text
+                    stateDescription = if (item.isCompleted) {
+                        "Выполнено"
                     } else {
-                        TextDecoration.None
-                    },
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                item.deadLine?.let {
+                        "Не выполнено"
+                    }
+                    onClick(label = "Изменить выполнение дела") {
+                        onEvent(TodoListEvent.ToggleCompleted(item))
+                        false
+                    }
+                }
+        ) {
+            Checkbox(
+                modifier = Modifier.clearAndSetSemantics {  },
+                checked = item.isCompleted,
+                onCheckedChange = {
+                    onEvent(TodoListEvent.ToggleCompleted(item))
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.green,
+                    uncheckedColor = if (item.importance == Importance.Urgent) MaterialTheme.colorScheme.red
+                    else MaterialTheme.colorScheme.tertiaryLabel,
+                    checkmarkColor = MaterialTheme.colorScheme.background,
+                    disabledCheckedColor = MaterialTheme.colorScheme.tertiaryLabel,
+                    disabledUncheckedColor = if (item.importance == Importance.Urgent) MaterialTheme.colorScheme.red
+                    else MaterialTheme.colorScheme.tertiaryLabel,
+                ),
+            )
+            Row(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(vertical = 12.dp),
+            ) {
+                ImportanceIcon(item = item)
+                Column {
                     Text(
-                        text = Mapper.changeDateFormat(item.deadLine!!),
-                        style = Typography.titleSmall,
-                        color = MaterialTheme.colorScheme.tertiaryLabel,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier
+                            .clearAndSetSemantics { }
+                            .clickable {
+                                onEvent(TodoListEvent.ToggleCompleted(item))
+                            },
+                        color = if (item.isCompleted) MaterialTheme.colorScheme.tertiaryLabel
+                        else MaterialTheme.colorScheme.labelPrimary,
+                        style = Typography.bodyMedium,
+                        text = item.text,
+                        textDecoration = if (item.isCompleted) {
+                            TextDecoration.LineThrough
+                        } else {
+                            TextDecoration.None
+                        },
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
                     )
+                    item.deadLine?.let {
+                        Text(
+                            text = Mapper.changeDateFormat(item.deadLine!!),
+                            style = Typography.titleSmall,
+                            color = MaterialTheme.colorScheme.tertiaryLabel,
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .clearAndSetSemantics { }
+                        )
+                    }
                 }
             }
         }
+        Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = {
             onEvent(TodoListEvent.OnInfoBtnClicked(item.id))
         }) {
             Icon(
                 painter = painterResource(id = R.drawable.info_outline_btn),
-                contentDescription = "Info button",
+                contentDescription = stringResource(id = R.string.info_item_icon_description),
                 tint = MaterialTheme.colorScheme.tertiaryLabel
             )
         }
-
     }
 }
 
@@ -388,7 +441,7 @@ fun ImportanceIcon(item: TodoItem) {
             Icon(
                 modifier = Modifier.padding(top = 2.dp, end = 4.dp),
                 painter = painterResource(id = R.drawable.high_importance_icon),
-                contentDescription = "High importance",
+                contentDescription = stringResource(id = R.string.urgent_icon_description),
                 tint = MaterialTheme.colorScheme.red,
             )
         }
@@ -397,7 +450,7 @@ fun ImportanceIcon(item: TodoItem) {
             Icon(
                 modifier = Modifier.padding(top = 2.dp, end = 4.dp),
                 painter = painterResource(id = R.drawable.arrow_down_icon),
-                contentDescription = "Low importance",
+                contentDescription = stringResource(id = R.string.low_icon_description),
                 tint = MaterialTheme.colorScheme.gray
             )
         }
